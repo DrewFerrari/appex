@@ -1,0 +1,276 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* AppEx Design System - Light Mode CSS Variables */
+    --background-primary: #ffffff;
+    --background-secondary: #f8fafc;
+    --background-tertiary: #f1f5f9;
+
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-disabled: #94a3b8;
+
+    --accent-blue: #3b82f6;
+    --accent-green: #10b981;
+    --accent-purple: #8b5cf6;
+
+    --status-success: #10b981;
+    --status-warning: #f59e0b;
+    --status-danger: #ef4444;
+    --status-info: #3b82f6;
+
+    --border-color: #e2e8f0;
+    --ring-color: #3b82f6;
+    --input-bg: #ffffff;
+
+    --radius: 0.5rem;
+
+    /* Legacy shadcn/ui variables (kept for compatibility) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+  }
+
+  .dark {
+    /* AppEx Design System - Dark Mode CSS Variables */
+    --background-primary: #0f172a;
+    --background-secondary: #1e293b;
+    --background-tertiary: #334155;
+
+    --text-primary: #ffffff;
+    --text-secondary: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-disabled: #64748b;
+
+    /* Legacy shadcn/ui variables (dark) */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --border-color: #334155;
+    --input-bg: #1e293b;
+  }
+
+  body {
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border-color);
+  }
+}
+
+/* Component Utilities */
+@layer utilities {
+
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent-blue focus:ring-offset-2 focus:ring-offset-background-primary;
+  }
+
+  /* Loading states */
+  .loading-skeleton {
+    @apply animate-pulse bg-background-tertiary rounded;
+  }
+
+  /* Custom scrollbar */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--background-tertiary) var(--background-secondary);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: var(--background-secondary);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--background-tertiary);
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+    opacity: 0.2;
+  }
+
+  /* Status badges */
+  .status-success {
+    @apply bg-status-success/10 text-status-success border border-status-success/20;
+  }
+
+  .status-warning {
+    @apply bg-status-warning/10 text-status-warning border border-status-warning/20;
+  }
+
+  .status-error {
+    @apply bg-status-danger/10 text-status-danger border border-status-danger/20;
+  }
+
+  .status-info {
+    @apply bg-status-info/10 text-status-info border border-status-info/20;
+  }
+
+  /* Currency display */
+  .currency-usd {
+    color: var(--status-success);
+  }
+
+  .currency-zwl {
+    color: var(--status-warning);
+  }
+
+  .currency-zar {
+    color: var(--accent-purple);
+  }
+
+  /* Glow effects */
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  /* Text effects */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-appex {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green), var(--accent-purple));
+  }
+
+  /* Legacy utility classes (deprecated but kept for compatibility) */
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .shadow-glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .bg-dark-primary {
+    background-color: var(--background-primary);
+  }
+
+  .bg-dark-secondary {
+    background-color: var(--background-secondary);
+  }
+
+  .text-light-primary {
+    color: var(--text-primary);
+  }
+
+  .text-light-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted-gray {
+    color: var(--text-muted);
+  }
+
+  .bg-accent-blue {
+    background-color: var(--accent-blue);
+  }
+
+  .bg-accent-green {
+    background-color: var(--accent-green);
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: #ffffff;
+    --text-muted: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

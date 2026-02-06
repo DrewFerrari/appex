@@ -1,0 +1,112 @@
+﻿
+> appex-pos-website@0.1.0 build
+> next build
+
+   Γû▓ Next.js 14.0.4
+
+   Creating an optimized production build ...
+node.exe :  ΓÜá Compiled 
+with warnings
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo       
+       : NotSpecified:   
+  ( ΓÜá Compiled with    
+ warnings:String) [],    
+ RemoteException
+    + FullyQualifiedErro 
+   rId : NativeCommandE  
+  rror
+ 
+
+./src/app/solutions/affil
+iation/page.tsx
+Attempted import error: 
+'Handshake' is not 
+exported from '__barrel_o
+ptimize__?names=ArrowRigh
+t,Award,CheckCircle,Dolla
+rSign,Handshake,Share2,Ta
+rget!=!lucide-react' 
+(imported as 
+'Handshake').
+
+Import trace for 
+requested module:
+./src/app/solutions/affil
+iation/page.tsx
+
+./src/app/solutions/affil
+iation/page.tsx
+Attempted import error: 
+'Handshake' is not 
+exported from '__barrel_o
+ptimize__?names=ArrowRigh
+t,Award,CheckCircle,Dolla
+rSign,Handshake,Share2,Ta
+rget!=!lucide-react' 
+(imported as 
+'Handshake').
+
+Import trace for 
+requested module:
+./src/app/solutions/affil
+iation/page.tsx
+
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/app/page.tsx:380:26
+Type error: 
+'solution.stats' is 
+possibly 'undefined'.
+
+[0m [90m 378 |[39m    
+                 
+[33m<[39m[33mdiv[39m 
+className[33m=[39m[32m
+"space-y-6"[39m[33m>[3
+9m[0m
+[0m [90m 379 |[39m    
+                   
+[33m<[39m[33mdiv[39m 
+className[33m=[39m[32m
+"grid grid-cols-3 gap-3 t
+ext-center"[39m[33m>[3
+9m[0m
+[0m[31m[1m>[22m[39m
+[90m 380 |[39m          
+               {solution
+[33m.[39mstats[33m.[39
+mmap((stat[33m,[39m 
+statIndex) [33m=>[39m 
+([0m
+[0m [90m     |[39m    
+                      
+[31m[1m^[22m[39m[0m
+[0m [90m 381 |[39m    
+                       
+[33m<[39m[33mdiv[39m 
+key[33m=[39m{statIndex}
+ className[33m=[39m[32
+m"bg-gray-50 rounded-lg 
+p-3"[39m[33m>[39m[0m
+[0m [90m 382 |[39m    
+                         
+[33m<[39m[33mdiv[39m 
+className[33m=[39m[32m
+"text-lg font-bold text-a
+ccent-blue"[39m[33m>[3
+9m{stat}[33m<[39m[33m/
+[39m[33mdiv[39m[33m>
+[39m[0m
+[0m [90m 383 |[39m    
+                       [
+33m<[39m[33m/[39m[33m
+div[39m[33m>[39m[0m
