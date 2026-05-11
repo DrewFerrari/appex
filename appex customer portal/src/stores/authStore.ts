@@ -1,14 +1,16 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AuthState, User, Branch } from '@/types'
+import type { AuthState, User, Branch, Business } from '@/types'
 
 interface AuthStore extends AuthState {
-  login: (user: User, token: string) => void
+  login: (user: User, token: string, business?: Business) => void
   logout: () => void
   refreshToken: (token: string) => void
   updateUser: (user: Partial<User>) => void
   switchBranch: (branch: Branch) => void
   setPermissions: (permissions: string[]) => void
+  setBusiness: (business: Business) => void
+  solutionType: Business['businessType'] | null
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -20,13 +22,15 @@ export const useAuthStore = create<AuthStore>()(
       permissions: [],
       currentBranch: null,
       isAuthenticated: false,
+      solutionType: null,
 
       // Actions
-      login: (user: User, token: string) =>
+      login: (user: User, token: string, business?: Business) =>
         set({
           user,
           token,
           isAuthenticated: true,
+          solutionType: business?.businessType || null,
         }),
 
       logout: () =>
@@ -36,6 +40,7 @@ export const useAuthStore = create<AuthStore>()(
           permissions: [],
           currentBranch: null,
           isAuthenticated: false,
+          solutionType: null,
         }),
 
       refreshToken: (token: string) =>
@@ -61,6 +66,11 @@ export const useAuthStore = create<AuthStore>()(
         set({
           permissions,
         }),
+
+      setBusiness: (business: Business) =>
+        set({
+          solutionType: business.businessType,
+        }),
     }),
     {
       name: 'auth-storage',
@@ -70,6 +80,7 @@ export const useAuthStore = create<AuthStore>()(
         permissions: state.permissions,
         currentBranch: state.currentBranch,
         isAuthenticated: state.isAuthenticated,
+        solutionType: state.solutionType,
       }),
     }
   )

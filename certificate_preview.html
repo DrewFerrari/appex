@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppEx Certificate Preview - A4 Optimized</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            background: #f0f4f8;
+            width: 210mm;
+            height: 297mm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .certificate-outer {
+            width: 210mm;
+            height: 297mm;
+            padding: 0mm;
+            background: linear-gradient(45deg, #2b2b7a 0%, #00d2ff 100%);
+        }
+        
+        .certificate-inner {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: relative;
+            padding: 10mm;
+            box-sizing: border-box;
+            border: 1px solid rgba(43, 43, 122, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .border-pattern {
+            position: absolute;
+            top: 10mm;
+            left: 10mm;
+            right: 10mm;
+            bottom: 10mm;
+            border: 2px solid #2b2b7a;
+            pointer-events: none;
+        }
+
+        .border-corner {
+            position: absolute;
+            width: 30mm;
+            height: 30mm;
+            border: 4mm solid #2b2b7a;
+        }
+        .corner-tl { top: -2mm; left: -2mm; border-right: none; border-bottom: none; }
+        .corner-tr { top: -2mm; right: -2mm; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: -2mm; left: -2mm; border-right: none; border-top: none; }
+        .corner-br { bottom: -2mm; right: -2mm; border-left: none; border-top: none; }
+        
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
+            background-image: url('appex light mode logo.png');
+            background-repeat: repeat;
+            background-size: 80mm 80mm;
+            background-position: center;
+            transform: rotate(-30deg) scale(1.5);
+            filter: grayscale(100%);
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 60mm;
+            margin-bottom: 3mm;
+        }
+        
+        .certificate-header {
+            margin-bottom: 5mm;
+        }
+
+        .title-main {
+            font-size: 30pt;
+            font-weight: 800;
+            color: #2b2b7a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 1mm 0;
+        }
+
+        .title-sub {
+            font-size: 12pt;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 5mm;
+        }
+        
+        .award-text {
+            font-size: 14pt;
+            color: #444;
+            margin-bottom: 2mm;
+        }
+        
+        .recipient-name {
+            font-size: 32pt;
+            font-weight: bold;
+            color: #2b2b7a;
+            text-decoration: underline;
+            margin: 3mm 0;
+            font-family: 'Georgia', serif;
+        }
+        
+        .course-title {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #b30000;
+            margin: 2mm 0;
+        }
+
+        .course-info-section {
+            text-align: left;
+            margin: 2mm 5mm;
+            padding: 4mm;
+            background: rgba(240, 244, 248, 0.5);
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+
+        .section-label {
+            font-weight: 800;
+            color: #2b2b7a;
+            font-size: 10pt;
+            margin-bottom: 1mm;
+            text-transform: uppercase;
+        }
+
+        .overview-text {
+            font-size: 9pt;
+            line-height: 1.4;
+            color: #333;
+            margin-bottom: 3mm;
+        }
+
+        .outcomes-list {
+            margin: 0;
+            padding-left: 5mm;
+            font-size: 8.5pt;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2mm;
+            margin: 2mm 5mm;
+            font-size: 9pt;
+            text-align: left;
+        }
+
+        .detail-item strong { color: #2b2b7a; }
+        
+        .signatures {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 8mm;
+        }
+        
+        .sig-box {
+            text-align: center;
+            width: 55mm;
+            position: relative;
+        }
+
+        .handwritten-sig {
+            font-family: 'Dancing Script', cursive;
+            font-size: 18pt;
+            color: #1a1a5a;
+            position: absolute;
+            bottom: 5mm;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 100%;
+            opacity: 0.8;
+        }
+
+        .sig-line {
+            border-top: 1px solid #555;
+            margin-top: 10mm;
+            padding-top: 1mm;
+            font-size: 9pt;
+            font-weight: bold;
+            color: #2b2b7a;
+        }
+
+        .sig-title {
+            font-size: 7.5pt;
+            color: #666;
+        }
+        
+        .footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 5mm;
+        }
+        
+        .qr-container {
+            text-align: center;
+            font-size: 7pt;
+            color: #2b2b7a;
+            font-weight: bold;
+        }
+
+        .qr-image {
+            width: 25mm;
+            height: 25mm;
+            border: 2px solid #2b2b7a;
+            border-radius: 4px;
+            margin-bottom: 2mm;
+            background: white;
+            padding: 2px;
+            display: block;
+        }
+        
+        .meta-id {
+            font-size: 7.5pt;
+            color: #888;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        @media print {
+            body { background: white; }
+            .certificate-outer { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-outer">
+        <div class="certificate-inner">
+            <div class="border-pattern">
+                <div class="border-corner corner-tl"></div>
+                <div class="border-corner corner-tr"></div>
+                <div class="border-corner corner-bl"></div>
+                <div class="border-corner corner-br"></div>
+            </div>
+            <div class="watermark"></div>
+            
+            <div class="content">
+                <img src="appex light mode logo.png" alt="AppEx Logo" class="logo">
+                
+                <div class="certificate-header">
+                    <div class="title-sub">This International Recognition is Proudly Awarded To</div>
+                    <div class="recipient-name">Tendai Ncube</div>
+                    <div class="award-text">for the successful completion of</div>
+                    <div class="title-main">Certificate of Completion</div>
+                    <div class="course-title">Retail Management & Operations</div>
+                </div>
+
+                <div class="course-info-section">
+                    <div class="section-label">Course Overview</div>
+                    <div class="overview-text">This comprehensive course provides a deep dive into the modern retail landscape, focusing on operational excellence, inventory strategies, and customer-centric service models.</div>
+                    
+                    <div class="section-label">Key Learning Outcomes</div>
+                    <ul class="outcomes-list">
+                        <li>Master POS transaction processing and cash management.</li>
+                        <li>Implement effective inventory control and reordering systems.</li>
+                        <li>Develop advanced customer relationship management strategies.</li>
+                        <li>Optimize store layout and visual merchandising for maximum sales.</li>
+                    </ul>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item"><strong>Student ID:</strong> APPX-STU-8842</div>
+                    <div class="detail-item"><strong>Duration:</strong> 4 Modules (12 Hours)</div>
+                    <div class="detail-item"><strong>Issue Date:</strong> 16 March 2026</div>
+                    <div class="detail-item"><strong>Completion Status:</strong> Verified with Distinction</div>
+                </div>
+
+                <div class="signatures">
+                    <div class="sig-box">
+                        <div class="handwritten-sig">K. Kadema</div>
+                        <div class="sig-line">ENG Kudakwashe Kadema</div>
+                        <div class="sig-title">Director of Training</div>
+                    </div>
+                    <div class="sig-box">
+                        <div class="handwritten-sig">A. Munyanyi</div>
+                        <div class="sig-line">ENG Andrew Munyanyi</div>
+                        <div class="sig-title">Program Director</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="qr-container">
+                    <!-- Placeholder QR -->
+                    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="qr-image">
+                        <rect width="100" height="100" fill="white"/>
+                        <path d="M10 10h30v30h-30zM60 10h30v30h-30zM10 60h30v30h-30z" fill="#2b2b7a"/>
+                        <path d="M20 20h10v10h-10zm50 0h10v10h-10zm-50 50h10v10h-10z" fill="white"/>
+                        <rect x="45" y="45" width="10" height="10" fill="#2b2b7a"/>
+                        <rect x="60" y="60" width="30" height="30" fill="#2b2b7a" fill-opacity="0.3"/>
+                        <text x="50" y="55" font-family="Arial" font-size="6" text-anchor="middle" fill="#2b2b7a" font-weight="bold">appex.co.zw</text>
+                    </svg>
+                    <div>SCAN TO VERIFY CERTIFICATE</div>
+                </div>
+                
+                <div class="meta-id">
+                    <strong>Certificate No:</strong> APPX-CERT-2026-8842<br>
+                    <strong>Verification ID:</strong> 8fa96e2c-3376-437f-bc70-08ac9b018ea7<br>
+                    <strong>Verify Online:</strong> https://appex.co.zw/verify/8fa96e2c-3376-437f-bc70-08ac9b018ea7<br>
+                    <em>Powered by AppEx Digital Certification Engine</em>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

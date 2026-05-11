@@ -18,6 +18,8 @@ const industries = [
   { value: 'hardware', label: 'Hardware Store' },
   { value: 'restaurant', label: 'Restaurant / Café' },
   { value: 'grocery', label: 'Grocery Store' },
+  { value: 'butchery', label: 'Butchery' },
+  { value: 'pharmacy', label: 'Pharmacy' },
   { value: 'service', label: 'Service Business' },
 ]
 

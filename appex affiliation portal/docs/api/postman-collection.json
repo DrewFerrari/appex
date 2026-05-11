@@ -1,0 +1,528 @@
+{
+  "info": {
+    "name": "AppEx Affiliation Portal API",
+    "description": "Complete API collection for AppEx Affiliation Portal",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"phone\": \"+263123456789\",\n  \"fullName\": \"John Doe\",\n  \"password\": \"securePassword123\",\n  \"confirmPassword\": \"securePassword123\",\n  \"nationalId\": \"123456789A\",\n  \"referralCode\": \"REF123\",\n  \"acceptTerms\": true,\n  \"acceptPrivacyPolicy\": true,\n  \"marketingConsent\": false,\n  \"preferredLanguage\": \"en\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register"
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"securePassword123\",\n  \"deviceName\": \"Chrome on Windows\",\n  \"deviceType\": \"desktop\",\n  \"rememberMe\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login"
+            }
+          }
+        },
+        {
+          "name": "Verify MFA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionId\": \"mfa-session-id\",\n  \"code\": \"123456\",\n  \"rememberDevice\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-mfa"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout"
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Affiliate Management",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/affiliate/dashboard"
+            }
+          }
+        },
+        {
+          "name": "Get Referrals",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/affiliate/referrals?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Create Referral",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referredEmail\": \"referral@example.com\",\n  \"referredName\": \"Jane Smith\",\n  \"businessName\": \"Jane's Business\",\n  \"notes\": \"Interested in affiliate program\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/affiliate/referrals"
+            }
+          }
+        },
+        {
+          "name": "Get Commissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/affiliate/commissions?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Get Payouts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/affiliate/payouts?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Request Payout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500.00,\n  \"method\": \"BANK_TRANSFER\",\n  \"bankAccount\": {\n    \"accountName\": \"John Doe\",\n    \"accountNumber\": \"1234567890\",\n    \"bankName\": \"Stanbic Bank\",\n    \"branch\": \"Harare Branch\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/affiliate/payouts"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commission Management",
+      "item": [
+        {
+          "name": "Calculate Commission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referralId\": \"uuid-string\",\n  \"saleAmount\": 1000.00,\n  \"commissionType\": \"STANDARD\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/commission/calculate"
+            }
+          }
+        },
+        {
+          "name": "Confirm Commission",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commissionId\": \"uuid-string\",\n  \"verificationData\": {}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/commission/confirm/uuid-string"
+            }
+          }
+        },
+        {
+          "name": "Mark Commission as Paid",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"commissionId\": \"uuid-string\",\n  \"payoutId\": \"uuid-string\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/commission/paid/uuid-string"
+            }
+          }
+        },
+        {
+          "name": "Get Commission Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/commission/analytics?period=month"
+            }
+          }
+        },
+        {
+          "name": "Get Commission Leaderboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/commission/leaderboard?period=month&limit=10"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Management",
+      "item": [
+        {
+          "name": "Get Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/dashboard"
+            }
+          }
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Get User Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/uuid-string"
+            }
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\",\n  \"reason\": \"Account verified\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/uuid-string/status"
+            }
+          }
+        },
+        {
+          "name": "Get System Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics?period=month"
+            }
+          }
+        },
+        {
+          "name": "Get KYC Submissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/kyc?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Approve KYC Submission",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/kyc/uuid-string/approve"
+            }
+          }
+        },
+        {
+          "name": "Reject KYC Submission",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminAccessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Documents unclear or invalid\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/kyc/uuid-string/reject"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminAccessToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Add timestamp to requests",
+          "pm.request.headers.add('X-Request-Timestamp', new Date().toISOString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Test response status",
+          "if (pm.response.code >= 200 && pm.response.code < 300) {",
+          "    pm.test('Status code is successful', function () {",
+          "        pm.response.to.have.status(200);",
+          "    });",
+          "} else {",
+          "    pm.test('Status code is error', function () {",
+          "        pm.response.to.have.status(pm.response.code);",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}

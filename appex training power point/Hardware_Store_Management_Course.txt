@@ -1,0 +1,42 @@
+# AppEx Hardware Store Management System Training
+
+## Course Overview
+
+### Module 1: AppEx Hardware System Overview & Interface
+- System Introduction & Benefits
+- Dashboard Layout & Navigation
+- User Interface Overview
+- Hardware Industry Focus
+- Quick Access Features
+
+### Module 2: Product Catalog Management & SKU Organization
+- Product Catalog Creation
+- SKU System Implementation
+- Product Categorization
+- Specification Management
+- Product Imaging & Documentation
+
+### Module 3: Supplier Management & Purchase Orders in AppEx
+- Supplier Database Setup
+- Purchase Order Creation
+- Vendor Relationship Management
+- Procurement Workflow
+- Price Negotiation Tools
+
+## Learning Objectives
+
+1. Master AppEx Hardware System Navigation
+2. Optimize Product Catalog Management & SKU Organization
+3. Streamline Supplier Management & Purchase Orders
+4. Enhance Hardware Store Operations
+
+## Course Duration
+- Total Modules: 3
+- Estimated Time: 5 hours
+- Certificate Available: Yes
+
+## Resources
+- System Screenshots
+- SKU Management Examples
+- Supplier Relationship Guidelines
+- Purchase Order Templates

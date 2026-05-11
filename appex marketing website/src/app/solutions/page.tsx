@@ -42,7 +42,8 @@ import {
   MessageCircle,
   Building,
   Cloud,
-  Lock
+  Lock,
+  Pill
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { generateWhatsAppMessage } from '@/lib/utils'
@@ -92,6 +93,26 @@ export default function SolutionsPage() {
       href: '/solutions/grocery',
       stats: ['150+ stores', '30% less waste', '24/7 inventory'],
       image: '🛒'
+    },
+    {
+      icon: Package,
+      title: 'Butchery Solution',
+      description: 'Specialized solution for butcheries with meat processing, weight management, and freshness tracking.',
+      features: ['Meat processing', 'Weight management', 'Freshness tracking', 'Quality control'],
+      color: 'from-red-500 to-red-700',
+      href: '/solutions/butchery',
+      stats: ['100+ butcheries', '25% less waste', 'Improved margins'],
+      image: '🥩'
+    },
+    {
+      icon: Pill,
+      title: 'Pharmacy Solution',
+      description: 'Complete pharmacy management system with prescription tracking, inventory control, and compliance features.',
+      features: ['Prescription management', 'Drug inventory', 'Expiry tracking', 'Patient records'],
+      color: 'from-purple-500 to-purple-700',
+      href: '/solutions/pharmacy',
+      stats: ['200+ pharmacies', '99% compliance', '24/7 monitoring'],
+      image: '💊'
     }
   ]
 
@@ -125,7 +146,7 @@ export default function SolutionsPage() {
       <DownloadModal isOpen={isDownloadModalOpen} onClose={() => setIsDownloadModalOpen(false)} />
 
       {/* Hero Section */}
-      <section className="py-24 bg-gradient-to-br from-dark-primary to-dark-secondary">
+      <section className="py-24 bg-gradient-to-br from-light-primary to-background-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <motion.div
@@ -133,19 +154,13 @@ export default function SolutionsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-light-primary mb-8 leading-tight">
+              <h1 className="text-4xl md:text-6xl font-bold text-dark-primary mb-8 leading-tight">
                 Industry-Specific <span className="text-gradient">Solutions</span>
               </h1>
-              <p className="text-xl text-light-secondary mb-12 leading-relaxed max-w-3xl mx-auto">
-                Tailored POS solutions designed for your specific industry needs.
-                From retail to restaurants, we have the perfect solution for your business.
+              <p className="text-xl text-muted-gray mb-12 leading-relaxed max-w-3xl mx-auto">
+                Tailored POS solutions designed for your specific industry needs
               </p>
-
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Button size="xl" variant="appex" onClick={() => setIsDownloadModalOpen(true)}>
-                  Start Free Trial
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
                 <Button
                   size="xl"
                   variant="appexOutline"
@@ -225,7 +240,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-background-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold text-dark-primary mb-6">
@@ -265,7 +280,7 @@ export default function SolutionsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-appex text-white">
+      <section className="py-24 bg-gradient-appex text-light-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -273,7 +288,7 @@ export default function SolutionsPage() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-dark-primary mb-8">
               Ready to Transform Your Business?
             </h2>
             <p className="text-xl mb-12 opacity-90 max-w-2xl mx-auto leading-relaxed">
@@ -283,14 +298,6 @@ export default function SolutionsPage() {
               <Button size="xl" variant="secondary" onClick={() => setIsDownloadModalOpen(true)}>
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                size="xl"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-accent-blue"
-                onClick={() => window.open(generateWhatsAppMessage("Hi! I'd like to schedule a demo to see which solution is right for my business"))}
-              >
-                Schedule Demo
               </Button>
             </div>
           </motion.div>

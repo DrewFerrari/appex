@@ -1,0 +1,57 @@
+# AppEx Pharmacy Management System Training
+
+## Course Overview
+
+### Module 1: AppEx Pharmacy System Overview & Navigation
+- System Introduction & Benefits
+- Dashboard Layout & Navigation
+- User Interface Overview
+- Pharmacy Industry Focus
+- Regulatory Compliance Overview
+
+### Module 2: Medication Management & Prescription Processing
+- Medication Database Overview
+- Prescription Workflow Management
+- Drug Information System
+- Dosage Calculation Tools
+- Interaction Checking Integration
+
+### Module 3: Patient Records & Care Management in AppEx
+- Patient Database Management
+- Medical History Tracking
+- Care Coordination Tools
+- Privacy & Security Features
+- Communication Systems
+
+### Module 4: Inventory Control & Expiry Date Tracking
+- Pharmacy Inventory Overview
+- Expiry Date Monitoring
+- Automated Reordering
+- Stock Level Optimization
+- Temperature Controlled Storage
+
+### Module 5: Pharmacy Compliance & Reporting System
+- Regulatory Compliance Overview
+- HIPAA Privacy Protection
+- Quality Assurance Procedures
+- Documentation Standards
+- Audit Preparation Tools
+
+## Learning Objectives
+
+1. Master AppEx Pharmacy System Navigation
+2. Ensure Medication Management & Prescription Processing
+3. Protect Patient Records & Care Management
+4. Maintain Inventory Control & Expiry Date Tracking
+5. Implement Pharmacy Compliance & Reporting
+
+## Course Duration
+- Total Modules: 5
+- Estimated Time: 8 hours
+- Certificate Available: Yes
+
+## Resources
+- System Screenshots
+- Compliance Documentation
+- Patient Privacy Guidelines
+- Medication Safety Protocols

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppEx Affiliation Portal - Technical Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-rocket text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">AppEx Affiliation Portal</h1>
+                        <p class="text-sm opacity-90">Senior Engineer Technical Documentation</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">Version 2.1.0</span>
+                    <span class="text-sm">Last Updated: 2026-04-17</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="container mx-auto px-4 py-4">
+            <div class="relative max-w-2xl mx-auto">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search documentation..." 
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Total Documents</p>
+                        <p class="text-2xl font-bold text-gray-900">12</p>
+                    </div>
+                    <i class="fas fa-file-alt text-3xl text-blue-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">API Endpoints</p>
+                        <p class="text-2xl font-bold text-gray-900">45+</p>
+                    </div>
+                    <i class="fas fa-plug text-3xl text-green-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Database Tables</p>
+                        <p class="text-2xl font-bold text-gray-900">15</p>
+                    </div>
+                    <i class="fas fa-database text-3xl text-purple-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Test Coverage</p>
+                        <p class="text-2xl font-bold text-gray-900">90%+</p>
+                    </div>
+                    <i class="fas fa-shield-alt text-3xl text-red-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Sections -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Volume I: Architecture & Design -->
+            <div class="fade-in">
+                <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-cube text-blue-500 mr-2"></i>
+                    Volume I: Architecture & Design
+                </h2>
+                <div class="space-y-3">
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="architecture">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="architecture/overview.md" class="hover:text-blue-600">
+                                        Architectural Overview
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">System design, technology stack, and decision records</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">ADR</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Monorepo</span>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">JWT</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="api">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="api/reference.md" class="hover:text-blue-600">
+                                        API Reference
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Complete REST API documentation with examples</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">REST</span>
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Auth</span>
+                                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded">45+ Endpoints</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="database">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="database/schema.md" class="hover:text-blue-600">
+                                        Database Schema
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Data model, relationships, and optimization</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">PostgreSQL</span>
+                                    <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded">Indexes</span>
+                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-800 text-xs rounded">15 Tables</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="frontend">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="frontend/state-management.md" class="hover:text-blue-600">
+                                        State Management
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Frontend architecture and data flow patterns</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-800 text-xs rounded">React</span>
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Zustand</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">TanStack</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="security">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="security/hardening.md" class="hover:text-blue-600">
+                                        Security Hardening
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Security measures and Zimbabwe compliance</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">RBAC</span>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Compliance</span>
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Encryption</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volume II: Production Engineering -->
+            <div class="fade-in">
+                <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-cogs text-green-500 mr-2"></i>
+                    Volume II: Production Engineering
+                </h2>
+                <div class="space-y-3">
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="testing">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="engineering/testing.md" class="hover:text-blue-600">
+                                        Testing Strategy
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Comprehensive testing approach with 90%+ coverage</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Unit Tests</span>
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">E2E Tests</span>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Playwright</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="performance">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="engineering/performance.md" class="hover:text-blue-600">
+                                        Performance Engineering
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Optimization strategies and monitoring</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Core Web Vitals</span>
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Caching</span>
+                                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded">200ms Target</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="background-jobs">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="engineering/background-jobs.md" class="hover:text-blue-600">
+                                        Background Jobs
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Asynchronous processing with BullMQ</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">BullMQ</span>
+                                    <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded">Redis</span>
+                                    <span class="px-2 py-1 bg-cyan-100 text-cyan-800 text-xs rounded">Email</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="admin-rbac">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="engineering/admin-rbac.md" class="hover:text-blue-600">
+                                        Admin Panel & RBAC
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Administrative interface and access control</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">5 Roles</span>
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Permissions</span>
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Analytics</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="incident-runbook">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="engineering/incident-runbook.md" class="hover:text-blue-600">
+                                        Incident Runbook
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Operational procedures and emergency response</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">SEV-0 to SEV-4</span>
+                                    <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">Escalation</span>
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Post-mortem</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volume III: Deployment & Operations -->
+            <div class="fade-in">
+                <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-rocket text-purple-500 mr-2"></i>
+                    Volume III: Deployment & Operations
+                </h2>
+                <div class="space-y-3">
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="cicd">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="deployment/cicd.md" class="hover:text-blue-600">
+                                        CI/CD Pipeline
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Build and deployment automation</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">GitHub Actions</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Railway</span>
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Quality Gates</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="migrations">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <a href="deployment/migrations.md" class="hover:text-blue-600">
+                                        Database Migrations
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Schema evolution workflow with Drizzle</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">Drizzle</span>
+                                    <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded">Versioning</span>
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Rollback</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-arrow-right text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <!-- Additional deployment docs -->
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="monitoring">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <span class="text-gray-400">Monitoring & Observability</span>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">System health and metrics (Coming Soon)</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Prometheus</span>
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Grafana</span>
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Alerts</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-clock text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow card-hover p-4" data-section="disaster-recovery">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-1">
+                                    <span class="text-gray-400">Disaster Recovery</span>
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">Backup and recovery procedures (Coming Soon)</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Backups</span>
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">RTO/RPO</span>
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">Failover</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-clock text-gray-400 mt-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start Guide -->
+        <div class="mt-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg p-8 text-white">
+            <h2 class="text-2xl font-bold mb-4">🚀 Quick Start Guide</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-2">For Developers</h3>
+                    <ol class="space-y-2 text-sm">
+                        <li>1. Clone the repository</li>
+                        <li>2. Install dependencies: <code class="bg-white/20 px-2 py-1 rounded">npm install</code></li>
+                        <li>3. Start development: <code class="bg-white/20 px-2 py-1 rounded">npm run dev:full</code></li>
+                        <li>4. Run tests: <code class="bg-white/20 px-2 py-1 rounded">npm run test:all</code></li>
+                    </ol>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">For Operations</h3>
+                    <ol class="space-y-2 text-sm">
+                        <li>1. Review architecture overview</li>
+                        <li>2. Check deployment pipeline</li>
+                        <li>3. Monitor system health</li>
+                        <li>4. Follow incident runbook for issues</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="font-semibold mb-4">Documentation</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="README.md" class="hover:text-white">Getting Started</a></li>
+                        <li><a href="architecture/overview.md" class="hover:text-white">Architecture</a></li>
+                        <li><a href="api/reference.md" class="hover:text-white">API Reference</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><a href="#" class="hover:text-white">GitHub Repository</a></li>
+                        <li><a href="#" class="hover:text-white">Support Channel</a></li>
+                        <li><a href="#" class="hover:text-white">Bug Reports</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Team</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>AppEx Engineering Team</li>
+                        <li>Last Updated: 2026-04-17</li>
+                        <li>Version: 2.1.0</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2026 AppEx Affiliation Portal. Built with ❤️ for the Zimbabwean market.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const sections = document.querySelectorAll('[data-section]');
+        
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                const card = section.closest('.card-hover');
+                
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    // Highlight matching text (simplified)
+                    if (searchTerm.length > 2) {
+                        card.classList.add('ring-2', 'ring-blue-500');
+                    } else {
+                        card.classList.remove('ring-2', 'ring-blue-500');
+                    }
+                } else {
+                    card.style.display = searchTerm ? 'none' : 'block';
+                    card.classList.remove('ring-2', 'ring-blue-500');
+                }
+            });
+        });
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add progress indicator for reading
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            
+            // You could add a progress bar here if needed
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            // Escape to clear search
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input'));
+                searchInput.blur();
+            }
+        });
+
+        // Add copy-to-clipboard functionality for code blocks
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate cards on load
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('fade-in');
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

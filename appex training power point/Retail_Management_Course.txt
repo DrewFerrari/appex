@@ -1,0 +1,49 @@
+# AppEx Retail Management System Training
+
+## Course Overview
+
+### Module 1: AppEx Retail System Overview & Dashboard Navigation
+- System Introduction & Benefits
+- Dashboard Layout & Navigation
+- User Interface Overview
+- Quick Access Features
+- Personalization Options
+
+### Module 2: Product Management & Inventory Control in AppEx
+- Product Catalog Creation
+- Inventory Level Monitoring
+- Stock Movement Tracking
+- Automated Reordering
+- Price Management
+
+### Module 3: Point of Sale (POS) Operations & Transaction Processing
+- POS Terminal Overview
+- Sales Transaction Process
+- Payment Processing Methods
+- Return & Exchange Management
+- Daily Cash Reconciliation
+
+### Module 4: Customer Management & Sales Analytics in AppEx
+- Customer Database Overview
+- Purchase History Tracking
+- Loyalty Program Management
+- Sales Analytics Dashboard
+- Customer Relationship Tools
+
+## Learning Objectives
+
+1. Master AppEx Retail System Navigation
+2. Optimize Product Management & Inventory Control
+3. Streamline POS Operations & Transaction Processing
+4. Enhance Customer Management & Sales Analytics
+
+## Course Duration
+- Total Modules: 4
+- Estimated Time: 6 hours
+- Certificate Available: Yes
+
+## Resources
+- System Screenshots
+- Step-by-Step Guides
+- Best Practices
+- Troubleshooting Tips

@@ -5,7 +5,7 @@ import { Sun, Moon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function ThemeToggle() {
-    const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+    const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
     useEffect(() => {
         // Check local storage or system preference
@@ -34,7 +34,7 @@ export default function ThemeToggle() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="text-text-muted hover:text-text-primary transition-colors"
+            className="text-text-muted hover:text-light-primary transition-colors"
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
             {theme === 'light' ? (

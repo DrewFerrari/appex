@@ -33,8 +33,8 @@ const Navbar = () => {
   return (
     <>
       <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled
-        ? 'bg-dark-primary/95 backdrop-blur-md shadow-lg border-b border-dark-tertiary'
-        : 'bg-dark-primary'
+        ? 'bg-light-primary/95 backdrop-blur-md shadow-lg border-b border-gray-200'
+        : 'bg-light-primary'
         }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -46,7 +46,7 @@ const Navbar = () => {
                   alt="Appex POS Logo"
                   width={32}
                   height={32}
-                  className="object-contain w-full h-full filter brightness-0 invert"
+                  className="object-contain w-full h-full"
                 />
               </div>
               <span className="font-bold text-xl text-light-primary">Appex</span>
@@ -60,7 +60,7 @@ const Navbar = () => {
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
-                  className="text-text-muted hover:text-light-primary transition-colors duration-200 font-medium whitespace-nowrap"
+                  className="text-muted-gray hover:text-light-primary transition-colors duration-200 font-medium whitespace-nowrap"
                 >
                   {item.name}
                 </Link>
@@ -74,7 +74,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => window.open(generateWhatsAppMessage("Hi! I'm interested in Appex POS"))}
-                className="text-text-muted hover:text-light-primary"
+                className="text-muted-gray hover:text-light-primary"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
                 WhatsApp
@@ -92,7 +92,7 @@ const Navbar = () => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-text-muted hover:text-light-primary p-2"
+                className="text-muted-gray hover:text-light-primary p-2"
               >
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -102,7 +102,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="bg-dark-secondary border-t border-dark-tertiary">
+          <div className="bg-light-secondary border-t border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
                 <Link
@@ -110,16 +110,16 @@ const Navbar = () => {
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
-                  className="block px-3 py-2 text-text-muted hover:text-light-primary hover:bg-dark-tertiary rounded-md font-medium"
+                  className="block px-3 py-2 text-muted-gray hover:text-light-primary hover:bg-background-tertiary rounded-md font-medium"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
-            <div className="pt-4 pb-3 border-t border-dark-tertiary">
+            <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="px-2 flex items-center justify-between mb-4">
-                <span className="text-text-muted px-3 font-medium">Appearance</span>
+                <span className="text-muted-gray px-3 font-medium">Appearance</span>
                 <ThemeToggle />
               </div>
               <div className="px-2 space-y-2">
@@ -127,7 +127,7 @@ const Navbar = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => window.open(generateWhatsAppMessage("Hi! I'm interested in Appex POS"))}
-                  className="w-full justify-start text-text-muted hover:text-light-primary"
+                  className="w-full justify-start text-muted-gray hover:text-light-primary"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   WhatsApp Support

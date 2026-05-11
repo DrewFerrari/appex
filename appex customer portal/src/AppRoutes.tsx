@@ -8,6 +8,7 @@ import CustomerManagement from '@/modules/customers/CustomerManagement'
 import StaffManagement from '@/modules/staff/StaffManagement'
 import Reports from '@/modules/reports/Reports'
 import Settings from '@/modules/settings/Settings'
+import SolutionRouter from '@/modules/solutions/SolutionRouter'
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -52,7 +53,14 @@ function AppRoutes() {
             <DashboardLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<SolutionRouter />} />
+        <Route path="retail" element={<SolutionRouter />} />
+        <Route path="restaurant" element={<SolutionRouter />} />
+        <Route path="hardware" element={<SolutionRouter />} />
+        <Route path="grocery" element={<SolutionRouter />} />
+        <Route path="butchery" element={<SolutionRouter />} />
+      </Route>
       
       <Route
         path="/pos"

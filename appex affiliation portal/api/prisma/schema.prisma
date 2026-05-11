@@ -1,0 +1,534 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users and Authentication
+model User {
+  id                        String    @id @default(cuid())
+  email                     String    @unique
+  phone                     String?   @unique
+  passwordHash               String    @map("password_hash")
+  mfaEnabled                Boolean   @default(false) @map("mfa_enabled")
+  mfaSecret                 String?   @map("mfa_secret")
+  passwordChangedAt          DateTime  @default(now()) @map("password_changed_at")
+  lastPasswordChange         DateTime? @map("last_password_change")
+  emailVerified              Boolean   @default(false) @map("email_verified")
+  emailVerifiedAt           DateTime? @map("email_verified_at")
+  phoneVerified              Boolean   @default(false) @map("phone_verified")
+  phoneVerifiedAt           DateTime? @map("phone_verified_at")
+  trustLevel                Int       @default(0) @map("trust_level")
+  trustLevelUpdatedAt       DateTime? @map("trust_level_updated_at")
+  failedLoginAttempts       Int       @default(0) @map("failed_login_attempts")
+  lockedUntil               DateTime? @map("locked_until")
+  lockReason                String?   @map("lock_reason")
+  status                    UserStatus @default(PENDING)
+  registrationStage         RegistrationStage @default(INITIATED) @map("registration_stage")
+  fullName                  String    @map("full_name")
+  nationalId                String?   @map("national_id")
+  idDocumentType            IdDocumentType? @map("id_document_type")
+  businessName              String?   @map("business_name")
+  businessType              BusinessType? @map("business_type")
+  businessRegistrationNumber String?   @map("business_registration_number")
+  referralCode              String    @unique @map("referral_code")
+  referredBy                String?   @map("referred_by")
+  affiliateTier             AffiliateTier @default(BRONZE) @map("affiliate_tier")
+  roles                     Role[]
+  residentialAddress         Json?     @map("residential_address")
+  preferredLanguage         String    @default("en") @map("preferred_language")
+  preferredCommunicationChannel CommunicationChannel @default(EMAIL) @map("preferred_communication_channel")
+  termsAcceptedAt          DateTime  @default(now()) @map("terms_accepted_at")
+  privacyPolicyAcceptedAt   DateTime  @default(now()) @map("privacy_policy_accepted_at")
+  marketingConsent          Boolean   @default(false) @map("marketing_consent")
+  dataProcessingConsent    Boolean   @default(true) @map("data_processing_consent")
+  oauthOnly                 Boolean   @default(false) @map("oauth_only")
+  lastLoginAt               DateTime? @map("last_login_at")
+  lastLoginIp               String?   @map("last_login_ip")
+  lastLoginDevice           String?   @map("last_login_device")
+  createdAt                 DateTime  @default(now()) @map("created_at")
+  updatedAt                 DateTime  @updatedAt
+
+  // Relations
+  sessions                  Session[]
+  mfaMethods                MfaMethod[]
+  backupCodes                BackupCode[]
+  trustedDevices             TrustedDevice[]
+  verificationTokens        VerificationToken[]
+  passwordHistory           PasswordHistory[]
+  passwordResets           PasswordReset[]
+  kycSubmissions           KycSubmission[]
+  consentRecords           ConsentRecord[]
+  securityEvents           SecurityEvent[]
+  oauthIdentities          OAuthIdentity[]
+  userActivitySummaries     UserActivitySummary[]
+  commissions              Commission[]
+  referrals                Referral[]
+  payouts                  Payout[]
+  auditLogs                AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  refreshTokenJti    String    @unique @map("refresh_token_jti")
+  deviceFingerprint  String    @map("device_fingerprint")
+  deviceName        String?   @map("device_name")
+  deviceType        DeviceType? @map("device_type")
+  ipAddress         String    @map("ip_address")
+  userAgent         String?   @map("user_agent")
+  location          Json?
+  isActive          Boolean   @default(true) @map("is_active")
+  isTrusted         Boolean   @default(false) @map("is_trusted")
+  oauthProvider     String?   @map("oauth_provider")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  lastUsedAt        DateTime  @default(now()) @map("last_used_at")
+  expiresAt         DateTime  @map("expires_at")
+  revokedAt         DateTime? @map("revoked_at")
+  revokeReason      String?   @map("revoke_reason")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model MfaMethod {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  methodType        MfaMethodType @map("method_type")
+  isActive          Boolean   @default(true) @map("is_active")
+  isPrimary         Boolean   @default(false) @map("is_primary")
+  secret            String?
+  phoneNumber       String?   @map("phone_number")
+  lastUsedAt        DateTime? @map("last_used_at")
+  usageCount        Int       @default(0) @map("usage_count")
+  setupCompletedAt  DateTime  @default(now()) @map("setup_completed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, methodType])
+  @@map("mfa_methods")
+}
+
+model BackupCode {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  codeHash    String    @map("code_hash")
+  codeIndex   Int       @map("code_index")
+  isActive    Boolean   @default(true) @map("is_active")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, codeIndex])
+  @@map("backup_codes")
+}
+
+model TrustedDevice {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  deviceFingerprint  String    @map("device_fingerprint")
+  deviceName        String?   @map("device_name")
+  ipAddress         String?   @map("ip_address")
+  userAgent         String?   @map("user_agent")
+  expiresAt         DateTime  @map("expires_at")
+  isActive          Boolean   @default(true) @map("is_active")
+  lastUsedAt        DateTime  @default(now()) @map("last_used_at")
+  usageCount        Int       @default(0) @map("usage_count")
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, deviceFingerprint])
+  @@map("trusted_devices")
+}
+
+model VerificationToken {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  token     String
+  type      VerificationType
+  expiresAt DateTime  @map("expires_at")
+  used      Boolean   @default(false)
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_tokens")
+}
+
+model PasswordHistory {
+  id           String    @id @default(cuid())
+  userId       String    @map("user_id")
+  passwordHash String    @map("password_hash")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_history")
+}
+
+model PasswordReset {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  tokenHash   String    @map("token_hash")
+  expiresAt   DateTime  @map("expires_at")
+  used        Boolean   @default(false)
+  usedAt      DateTime? @map("used_at")
+  ipAddress   String?   @map("ip_address")
+  userAgent   String?   @map("user_agent")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
+}
+
+// KYC and Compliance
+model KycSubmission {
+  id             String           @id @default(cuid())
+  userId         String           @map("user_id")
+  documentType   IdDocumentType   @map("document_type")
+  idNumber       String           @map("id_number")
+  expiryDate     DateTime?        @map("expiry_date")
+  documents      Json             // Array of uploaded documents
+  status         KycStatus        @default(PENDING)
+  reviewedBy     String?          @map("reviewed_by")
+  reviewedAt     DateTime?        @map("reviewed_at")
+  reviewNotes    String?          @map("review_notes")
+  rejectionReason String?          @map("rejection_reason")
+  submittedAt    DateTime         @default(now()) @map("submitted_at")
+  updatedAt      DateTime         @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("kyc_submissions")
+}
+
+model ConsentRecord {
+  id              String         @id @default(cuid())
+  userId          String         @map("user_id")
+  consentType     ConsentType    @map("consent_type")
+  version         String
+  granted         Boolean
+  ipAddress       String?        @map("ip_address")
+  userAgent       String?        @map("user_agent")
+  grantedAt       DateTime       @default(now()) @map("granted_at")
+  revokedAt       DateTime?       @map("revoked_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("consent_records")
+}
+
+// OAuth Integration
+model OAuthIdentity {
+  id           String    @id @default(cuid())
+  userId       String    @map("user_id")
+  provider     String
+  providerId   String    @map("provider_id")
+  email        String
+  profileData  Json      @map("profile_data")
+  lastUsedAt   DateTime  @default(now()) @map("last_used_at")
+  usageCount   Int       @default(0) @map("usage_count")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@map("oauth_identities")
+}
+
+// Security and Audit
+model SecurityEvent {
+  id                String    @id @default(cuid())
+  userId            String?   @map("user_id")
+  eventType         String    @map("event_type")
+  severity          Severity   @default(LOW)
+  ipAddress         String?   @map("ip_address")
+  userAgent         String?   @map("user_agent")
+  deviceFingerprint  String?   @map("device_fingerprint")
+  metadata          Json?
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("security_events")
+}
+
+model FailedLoginAttempt {
+  id          String    @id @default(cuid())
+  email       String
+  ipAddress   String    @map("ip_address")
+  userAgent   String?   @map("user_agent")
+  deviceFingerprint String? @map("device_fingerprint")
+  reason      FailedLoginReason
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("failed_login_attempts")
+}
+
+// Affiliate System
+model Commission {
+  id              String          @id @default(cuid())
+  userId          String          @map("user_id")
+  referralId      String?         @map("referral_id")
+  amount          Decimal          @db.Decimal(10, 2)
+  type            CommissionType   @default(STANDARD)
+  status          CommissionStatus @default(PENDING)
+  earnedDate      DateTime         @default(now()) @map("earned_date")
+  confirmedDate   DateTime?        @map("confirmed_date")
+  paidDate        DateTime?        @map("paid_date")
+  payoutId        String?         @map("payout_id")
+  metadata        Json?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("commissions")
+}
+
+model Referral {
+  id              String      @id @default(cuid())
+  affiliateId      String      @map("affiliate_id")
+  referredEmail    String      @map("referred_email")
+  referredName     String?     @map("referred_name")
+  businessName     String?     @map("business_name")
+  status          ReferralStatus @default(PENDING)
+  nextFollowUp    DateTime?   @map("next_follow_up")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  convertedAt     DateTime?   @map("converted_at")
+  commissionEarned Decimal?    @db.Decimal(10, 2) @map("commission_earned")
+
+  // Relations
+  affiliate User @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@map("referrals")
+}
+
+model Payout {
+  id            String        @id @default(cuid())
+  userId        String        @map("user_id")
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PayoutMethod
+  status        PayoutStatus @default(PENDING)
+  bankAccount   Json?         @map("bank_account")
+  mobileMoney    Json?         @map("mobile_money")
+  processingDate DateTime?    @map("processing_date")
+  completedDate  DateTime?    @map("completed_date")
+  reference     String?
+  notes         String?
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payouts")
+}
+
+// Analytics and Reporting
+model UserActivitySummary {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  date              DateTime
+  periodType        PeriodType @map("period_type")
+  loginCount        Int       @default(0) @map("login_count")
+  sessionDuration   Int       @default(0) @map("session_duration")
+  pageViews         Int       @default(0) @map("page_views")
+  apiCalls          Int       @default(0) @map("api_calls")
+  failedLoginAttempts Int     @default(0) @map("failed_login_attempts")
+  mfaVerifications  Int       @default(0) @map("mfa_verifications")
+  securityEvents    Int       @default(0) @map("security_events")
+  commissionsEarned Decimal   @default(0.00) @db.Decimal(15, 2) @map("commissions_earned")
+  referralsMade     Int       @default(0) @map("referrals_made")
+  conversionEvents  Int       @default(0) @map("conversion_events")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, periodType])
+  @@map("user_activity_summary")
+}
+
+// Audit and Compliance
+model AuditLog {
+  id         String    @id @default(cuid())
+  tableName  String    @map("table_name")
+  operation  String
+  userId     String?   @map("user_id")
+  oldValues  Json?     @map("old_values")
+  newValues  Json?     @map("new_values")
+  changedAt  DateTime  @default(now()) @map("changed_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_log")
+}
+
+// Enums
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  PERMANENTLY_LOCKED
+}
+
+enum RegistrationStage {
+  INITIATED
+  EMAIL_VERIFIED
+  PROFILE_SET
+  KYC_SUBMITTED
+  APPROVED
+  ACTIVE
+  REJECTED
+}
+
+enum AffiliateTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum Role {
+  AFFILIATE
+  MANAGER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum IdDocumentType {
+  NATIONAL_ID
+  PASSPORT
+  DRIVERS_LICENSE
+}
+
+enum BusinessType {
+  INDIVIDUAL
+  SOLE_PROPRIETOR
+  COMPANY
+}
+
+enum CommunicationChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+enum DeviceType {
+  desktop
+  mobile
+  tablet
+}
+
+enum MfaMethodType {
+  TOTP
+  SMS
+  BACKUP_CODES
+}
+
+enum VerificationType {
+  EMAIL_VERIFICATION
+  PHONE_VERIFICATION
+  MFA_BACKUP
+  ACCOUNT_RECOVERY
+}
+
+enum ConsentType {
+  TERMS
+  PRIVACY
+  MARKETING
+  DATA_PROCESSING
+  KYC
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FailedLoginReason {
+  INVALID_PASSWORD
+  ACCOUNT_LOCKED
+  USER_NOT_FOUND
+  MFA_REQUIRED
+}
+
+enum KycStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  ADDITIONAL_INFO_REQUIRED
+}
+
+enum CommissionType {
+  STANDARD
+  BONUS
+  RECURRING
+  REFERRAL
+}
+
+enum CommissionStatus {
+  PENDING
+  CONFIRMED
+  PAID
+  CANCELLED
+}
+
+enum ReferralStatus {
+  PENDING
+  CONTACTED
+  INTERESTED
+  CONVERTED
+  NOT_INTERESTED
+}
+
+enum PayoutMethod {
+  BANK_TRANSFER
+  ECOCASH
+  PAYNOW
+  MOBILE_MONEY
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PeriodType {
+  daily
+  weekly
+  monthly
+}

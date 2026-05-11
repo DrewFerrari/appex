@@ -1,0 +1,49 @@
+# AppEx Restaurant Operations System Training
+
+## Course Overview
+
+### Module 1: AppEx Restaurant System Dashboard & Navigation
+- System Introduction & Benefits
+- Dashboard Layout & Navigation
+- User Interface Overview
+- Quick Access Features
+- Real-time Data Display
+
+### Module 2: Menu Management & Recipe Costing in AppEx
+- Menu Creation & Management
+- Recipe Development Tools
+- Cost Calculation Methods
+- Menu Pricing Strategies
+- Nutritional Information Management
+
+### Module 3: Order Processing & Kitchen Operations System
+- Order Entry Interface
+- Kitchen Display System (KDS)
+- Order Status Tracking
+- Kitchen Workflow Management
+- Order Fulfillment Process
+
+### Module 4: Table Management & Customer Service in AppEx
+- Table Layout Management
+- Reservation System Overview
+- Waitstaff Assignment Tools
+- Table Turnover Optimization
+- Customer Service Integration
+
+## Learning Objectives
+
+1. Master AppEx Restaurant System Navigation
+2. Optimize Menu Management & Recipe Costing
+3. Streamline Order Processing & Kitchen Operations
+4. Enhance Table Management & Customer Service
+
+## Course Duration
+- Total Modules: 4
+- Estimated Time: 6 hours
+- Certificate Available: Yes
+
+## Resources
+- System Screenshots
+- Kitchen Workflow Diagrams
+- Menu Engineering Examples
+- Customer Service Protocols

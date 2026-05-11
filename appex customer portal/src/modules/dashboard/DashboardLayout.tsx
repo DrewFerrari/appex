@@ -23,6 +23,7 @@ import DashboardPage from './DashboardPage'
 import AIAssistant from '../ai/AIAssistant'
 import { CurrencySwitcher } from '@/components/shared/CurrencySwitcher'
 import ThemeToggle from '@/components/shared/ThemeToggle'
+import SolutionRouter from '../solutions/SolutionRouter'
 
 interface DashboardLayoutProps { }
 
@@ -209,7 +210,7 @@ export default function DashboardLayout({ }: DashboardLayoutProps) {
 
         {/* Page content */}
         <main className="flex-1">
-          {location.pathname === '/dashboard' ? <DashboardPage /> : <Outlet />}
+          {location.pathname === '/dashboard' ? <SolutionRouter /> : <Outlet />}
         </main>
       </div>
       <AIAssistant />

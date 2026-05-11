@@ -42,7 +42,8 @@ import {
   MessageCircle,
   Building,
   Cloud,
-  Lock
+  Lock,
+  Pill
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { generateWhatsAppMessage } from '@/lib/utils'
@@ -93,6 +94,26 @@ const HomePage = () => {
       href: '/solutions/grocery',
       stats: ['150+ stores', '30% less waste', '24/7 inventory'],
       image: '🛒'
+    },
+    {
+      icon: Package,
+      title: 'Butchery Solution',
+      description: 'Specialized solution for butcheries with meat processing, weight management, and freshness tracking.',
+      features: ['Meat processing', 'Weight management', 'Freshness tracking', 'Quality control'],
+      color: 'from-red-500 to-red-700',
+      href: '/solutions/butchery',
+      stats: ['100+ butcheries', '25% less waste', 'Improved margins'],
+      image: '🥩'
+    },
+    {
+      icon: Pill,
+      title: 'Pharmacy Solution',
+      description: 'Complete POS for pharmacies handling prescriptions, expiry date tracking, and medical aid integration.',
+      features: ['Prescription tracking', 'Expiry date alerts', 'Medical aid support', 'Batch tracking'],
+      color: 'from-cyan-500 to-blue-600',
+      href: '/solutions/pharmacy',
+      stats: ['200+ pharmacies', 'Zero expired stock', '100% compliant'],
+      image: '💊'
     }
   ]
 
@@ -336,7 +357,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {solutions.map((solution, index) => (
               <motion.div
                 key={index}

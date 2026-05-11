@@ -1,0 +1,1 @@
+try { require('express'); console.log('express ok'); require('cors'); console.log('cors ok'); require('helmet'); console.log('helmet ok'); require('cookie-parser'); console.log('cookie ok'); } catch(e) { console.error(e) }

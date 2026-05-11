@@ -1,0 +1,49 @@
+# AppEx Grocery Store Management System Training
+
+## Course Overview
+
+### Module 1: AppEx Grocery System Dashboard & Navigation
+- System Introduction & Benefits
+- Dashboard Layout & Navigation
+- User Interface Overview
+- Grocery Industry Focus
+- Real-time Data Display
+
+### Module 2: Fresh Produce Management & Expiry Tracking
+- Produce Management Overview
+- Fresh Product Receiving
+- Quality Control Procedures
+- Expiry Date Tracking
+- Temperature Monitoring Systems
+
+### Module 3: Perishable Goods Inventory & Rotation System
+- Perishable Inventory Overview
+- FIFO Implementation
+- Stock Rotation Procedures
+- Expiry Monitoring Systems
+- Quality Assurance Integration
+
+### Module 4: Supplier Management & Order Processing in AppEx
+- Supplier Database Setup
+- Order Processing Workflows
+- Delivery Management System
+- Quality Control Integration
+- Invoice Processing
+
+## Learning Objectives
+
+1. Master AppEx Grocery System Navigation
+2. Optimize Fresh Produce Management & Expiry Tracking
+3. Streamline Perishable Goods Inventory & Rotation
+4. Enhance Supplier Management & Order Processing
+
+## Course Duration
+- Total Modules: 4
+- Estimated Time: 6 hours
+- Certificate Available: Yes
+
+## Resources
+- System Screenshots
+- Freshness Control Guidelines
+- Inventory Rotation Procedures
+- Supplier Management Templates

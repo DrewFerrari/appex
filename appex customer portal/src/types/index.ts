@@ -15,7 +15,7 @@ export interface User {
 export interface Business {
   id: string
   name: string
-  businessType: 'retail' | 'restaurant' | 'hardware' | 'service' | 'manufacturing'
+  businessType: 'retail' | 'restaurant' | 'hardware' | 'grocery' | 'butchery' | 'service' | 'manufacturing'
   registrationNumber?: string
   vatNumber?: string
   primaryCurrency: 'USD' | 'ZiG' | 'ZAR'

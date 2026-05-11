@@ -187,7 +187,10 @@
 
   /* Premium Glass Effects */
   .glass-card {
-    @apply bg-background-secondary/40 backdrop-blur-xl border border-border shadow-2xl;
+    background-color: rgba(248, 250, 252, 0.4);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-default);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   .glass-morphism {
