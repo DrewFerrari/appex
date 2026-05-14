@@ -1,22 +1,84 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get("x-user-id")
+    const session = await getServerSession(authOptions)
+    let userId = session?.user?.id || request.headers.get("x-user-id")
+    
+    if (!userId && session?.user?.email) {
+      // Fallback: find user by email if ID is missing from session
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      })
+      userId = user?.id
+    }
     
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID required" },
-        { status: 400 }
+        { error: "Unauthorized" },
+        { status: 401 }
       )
     }
 
     const { searchParams } = new URL(request.url)
     const lessonId = searchParams.get("lessonId")
     const courseId = searchParams.get("courseId")
+    const summary = searchParams.get("summary") === "true"
+
+    if (summary) {
+      // Get all enrollments for the user
+      const enrollments = await prisma.courseEnrollment.findMany({
+        where: { userId },
+        include: {
+          course: {
+            include: {
+              modules: {
+                include: {
+                  lessons: {
+                    select: { id: true }
+                  }
+                }
+              }
+            }
+          }
+        }
+      })
+
+      // Get all progress for the user
+      const userProgress = await prisma.userProgress.findMany({
+        where: { userId }
+      })
+
+      const courseSummaries = enrollments.map(enrollment => {
+        const courseLessons = enrollment.course.modules.flatMap(m => m.lessons.map(l => l.id))
+        const totalLessons = courseLessons.length
+        
+        const completedLessons = userProgress.filter(p => 
+          courseLessons.includes(p.lessonId) && p.status === "COMPLETED"
+        ).length
+
+        const progressPercentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+
+        return {
+          courseId: enrollment.courseId,
+          courseTitle: enrollment.course.title,
+          businessType: enrollment.course.businessType,
+          totalLessons,
+          completedLessons,
+          progressPercentage,
+          completedAt: enrollment.completedAt,
+          enrolledAt: enrollment.enrolledAt
+        }
+      })
+
+      return NextResponse.json({ courses: courseSummaries })
+    }
 
     if (lessonId) {
       // Get progress for specific lesson
@@ -142,12 +204,22 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get("x-user-id")
+    const session = await getServerSession(authOptions)
+    let userId = session?.user?.id || request.headers.get("x-user-id")
     
+    if (!userId && session?.user?.email) {
+      // Fallback: find user by email if ID is missing from session
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      })
+      userId = user?.id
+    }
+
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID required" },
-        { status: 400 }
+        { error: "Unauthorized" },
+        { status: 401 }
       )
     }
 
@@ -161,12 +233,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get courseId from lesson through module
+    // Standardize status to uppercase for enum
+    const standardizedStatus = status?.toUpperCase() || "IN_PROGRESS"
+
+    // Get courseId and all lessons in course for completion check
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
       include: {
         module: {
-          select: { courseId: true }
+          include: {
+            course: {
+              include: {
+                modules: {
+                  include: {
+                    lessons: {
+                      select: { id: true }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     })
@@ -189,22 +276,66 @@ export async function POST(request: NextRequest) {
         }
       },
       update: {
-        status: status || "in_progress",
+        status: standardizedStatus as any,
         progressPercentage: progressPercentage || 0,
         lastPositionSeconds: lastPositionSeconds || 0,
-        completedAt: status === "completed" ? new Date() : null,
+        completedAt: standardizedStatus === "COMPLETED" ? new Date() : null,
         updatedAt: new Date()
       },
       create: {
         userId,
         courseId,
         lessonId,
-        status: status || "IN_PROGRESS",
+        status: standardizedStatus as any,
         progressPercentage: progressPercentage || 0,
         lastPositionSeconds: lastPositionSeconds || 0,
-        completedAt: status === "completed" ? new Date() : null
+        completedAt: standardizedStatus === "COMPLETED" ? new Date() : null
       }
     })
+
+    // If lesson was completed, check for course completion
+    if (standardizedStatus === "COMPLETED") {
+      const allLessonsInCourse = lesson.module.course.modules.flatMap(m => m.lessons.map(l => l.id))
+      
+      const completedProgress = await prisma.userProgress.findMany({
+        where: {
+          userId,
+          courseId,
+          status: "COMPLETED",
+          lessonId: { in: allLessonsInCourse }
+        },
+        select: { lessonId: true }
+      })
+
+      if (completedProgress.length === allLessonsInCourse.length) {
+        // Course is fully completed!
+        await prisma.courseEnrollment.upsert({
+          where: {
+            userId_courseId: { userId, courseId }
+          },
+          update: {
+            completedAt: new Date()
+          },
+          create: {
+            userId,
+            courseId,
+            completedAt: new Date()
+          }
+        })
+
+        // Track course completion activity
+        await prisma.userActivity.create({
+          data: {
+            userId,
+            activityType: "course_completed",
+            metadata: {
+              courseId,
+              courseTitle: lesson.module.course.title
+            }
+          }
+        })
+      }
+    }
 
     return NextResponse.json(progress, { status: 201 })
   } catch (error) {

@@ -43,7 +43,9 @@ import {
   Building,
   Cloud,
   Lock,
-  Pill
+  Pill,
+  GraduationCap,
+  BookOpen
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { generateWhatsAppMessage } from '@/lib/utils'
@@ -572,7 +574,7 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Business Portal Card */}
+            {/* Learning Hub Card */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -582,20 +584,20 @@ const HomePage = () => {
               <Card className="bg-dark-secondary border-dark-tertiary hover:border-accent-blue/50 hover:shadow-2xl transition-all duration-300 h-full overflow-hidden group shadow-xl">
                 <CardHeader className="p-8">
                   <div className="w-14 h-14 bg-accent-blue/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <Building className="w-8 h-8 text-accent-blue" />
+                    <GraduationCap className="w-8 h-8 text-accent-blue" />
                   </div>
-                  <CardTitle className="text-3xl text-white mb-4">Business Management Portal</CardTitle>
+                  <CardTitle className="text-3xl text-white mb-4">AppEx Learning Hub</CardTitle>
                   <CardDescription className="text-xl text-text-muted leading-relaxed">
-                    A high-performance command center for business owners. Manage multi-warehouse inventory, view AI-powered sales forecasts, and track real-time analytics across all branches.
+                    Master the AppEx platform with our comprehensive training resources. Access video tutorials, interactive courses, and expert-led webinars.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-8 pt-0">
                   <ul className="space-y-4 mb-8">
                     {[
-                      'Multi-Warehouse Inventory Tracking',
-                      'AI Sales & Revenue Forecasting',
-                      'Real-time Multi-Currency Analytics',
-                      'Staff Performance & Shift Management'
+                      'Interactive Video Tutorials',
+                      'Certified Training Courses',
+                      'Expert-Led Live Webinars',
+                      'Resource Documentation Library'
                     ].map((item, i) => (
                       <li key={i} className="flex items-center text-text-muted">
                         <CheckCircle className="w-5 h-5 text-accent-blue mr-3" />
@@ -604,10 +606,10 @@ const HomePage = () => {
                     ))}
                   </ul>
                   <Button variant="appex" className="w-full" asChild>
-                    <a href="http://localhost:5173" target="_blank" rel="noopener noreferrer">
-                      Access Business Portal
+                    <Link href="/start-learning">
+                      Start Learning
                       <ArrowRight className="ml-2 h-4 w-4" />
-                    </a>
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

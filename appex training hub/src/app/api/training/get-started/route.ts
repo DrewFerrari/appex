@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export async function GET() {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -15,64 +17,95 @@ export async function GET() {
       )
     }
 
-    // Mock user state based on email for demonstration
     const userEmail = session.user.email.toLowerCase()
     
-    // Simulate different user states based on email
-    if (userEmail.includes('new') || userEmail.includes('demo')) {
+    // Find user in database
+    const user = await prisma.user.findUnique({
+      where: { email: userEmail },
+      include: {
+        profile: true,
+        courseEnrollments: {
+          include: {
+            course: true
+          }
+        },
+        userProgress: {
+          include: {
+            course: true
+          }
+        }
+      }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      )
+    }
+
+    const userId = user.id
+    
+    // 1. Check for New User (No enrollments AND no profile)
+    if (user.courseEnrollments.length === 0 && !user.profile) {
       return NextResponse.json({
         status: "new_user",
         nextAction: "onboarding",
-        message: "Welcome to AppEx Learning Hub!"
+        message: "Welcome to AppEx Learning Hub! Let's get you started."
       })
     }
     
-    if (userEmail.includes('progress') || userEmail.includes('incomplete')) {
+    // 2. Check for Incomplete Previous Learning
+    const incompleteEnrollments = user.courseEnrollments.filter(e => !e.completedAt)
+    const inProgressLessons = user.userProgress.filter(p => p.status === "IN_PROGRESS")
+    
+    if (incompleteEnrollments.length > 0 || inProgressLessons.length > 0) {
+      // Get the most recently updated progress
+      const recentProgress = [...user.userProgress].sort((a, b) => 
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      ).slice(0, 3)
+
       return NextResponse.json({
         status: "incomplete_previous",
         nextAction: "resume_learning",
         data: {
-          incompleteCourses: [
-            {
-              id: "1",
-              title: "Getting Started with AppEx Retail",
-              progress: 65,
-              lastAccessed: new Date().toISOString()
-            },
-            {
-              id: "2", 
-              title: "Advanced Inventory Management",
-              progress: 30,
-              lastAccessed: new Date(Date.now() - 86400000).toISOString()
-            }
-          ]
+          incompleteCourses: recentProgress.map(p => ({
+            id: p.courseId,
+            title: p.course.title,
+            progress: p.progressPercentage,
+            lastAccessed: p.updatedAt
+          }))
         },
         message: "You have incomplete courses to resume"
       })
     }
     
-    if (userEmail.includes('completed') || userEmail.includes('advanced')) {
+    // 3. Check if completed everything
+    const totalPublishedCourses = await prisma.course.count({ where: { isPublished: true } })
+    const completedEnrollments = user.courseEnrollments.filter(e => e.completedAt)
+    
+    if (completedEnrollments.length > 0 && completedEnrollments.length >= totalPublishedCourses) {
       return NextResponse.json({
         status: "completed_all",
         nextAction: "advanced_learning",
         data: {
-          completedCourses: 12,
-          totalCourses: 12,
-          certificates: 3
+          completedCourses: completedEnrollments.length,
+          totalCourses: totalPublishedCourses,
+          certificates: await prisma.certificate.count({ where: { userId } })
         },
-        message: "Congratulations! You've completed all courses"
+        message: "Congratulations! You've completed all available courses"
       })
     }
 
-    // Default to returning user with some progress
+    // 4. Default to returning user
     return NextResponse.json({
       status: "returning_user",
       nextAction: "dashboard",
       data: {
-        completedCourses: 3,
-        totalCourses: 12
+        completedCourses: completedEnrollments.length,
+        totalCourses: totalPublishedCourses
       },
-      message: "Continue your learning journey"
+      message: "Welcome back! Continue your learning journey."
     })
 
   } catch (error) {

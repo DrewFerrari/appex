@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -9,6 +11,16 @@ export async function GET(
 ) {
   try {
     const { id: courseId } = await params
+    const session = await getServerSession(authOptions)
+    let userId = session?.user?.id || request.headers.get("x-user-id")
+    
+    if (!userId && session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      })
+      userId = user?.id
+    }
 
     const course = await prisma.course.findUnique({
       where: { id: courseId },
@@ -22,11 +34,11 @@ export async function GET(
           }
         },
         enrollments: {
-          where: { userId: request.headers.get("x-user-id") || "" },
+          where: { userId: userId || "" },
           take: 1
         },
         certificates: {
-          where: { userId: request.headers.get("x-user-id") || "" },
+          where: { userId: userId || "" },
           take: 1
         }
       }
@@ -101,12 +113,21 @@ export async function PUT(
 ) {
   try {
     const { id: courseId } = await params
-    const userId = request.headers.get("x-user-id")
+    const session = await getServerSession(authOptions)
+    let userId = session?.user?.id || request.headers.get("x-user-id")
+    
+    if (!userId && session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { id: true }
+      })
+      userId = user?.id
+    }
     
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID required" },
-        { status: 400 }
+        { error: "Unauthorized" },
+        { status: 401 }
       )
     }
 

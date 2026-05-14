@@ -26,7 +26,7 @@ const Navbar = () => {
     { name: 'Pricing', href: '/pricing' },
     { name: 'Solutions', href: '/solutions' },
     { name: 'Affiliation', href: 'http://localhost:5174', external: true },
-    { name: 'Business Portal', href: 'http://localhost:5173', external: true },
+    { name: 'Learning Hub', href: '/start-learning' },
     { name: 'Contact', href: '/contact' },
   ]
 

@@ -94,77 +94,49 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // Mock data for now - will be replaced with API calls
-      // simulating network delay for pull to refresh effect
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      setIsLoading(true)
       
-      setStats({
-        coursesEnrolled: 5,
-        coursesCompleted: 2,
-        hoursLearned: 24,
-        certificatesEarned: 2,
-        learningStreak: 7
-      })
-
-      setContinueLearning([
-        {
-          id: "1",
-          title: "Retail POS Operations",
-          progress: 65,
-          lastAccessed: "2024-01-15",
-          duration: 8,
-          modules: 6,
-          lessons: 24,
-          businessType: "Retail",
+      // Fetch Progress Summary
+      const progressRes = await fetch("/api/learning/progress?summary=true")
+      if (progressRes.ok) {
+        const progressData = await progressRes.json()
+        const activeCourses = progressData.courses.filter((c: any) => c.progressPercentage > 0 && c.progressPercentage < 100)
+        
+        setContinueLearning(activeCourses.map((c: any) => ({
+          id: c.courseId,
+          title: c.courseTitle,
+          progress: c.progressPercentage,
+          lastAccessed: c.updatedAt || new Date().toISOString(),
+          duration: 0, // Should come from course model
+          modules: 0,
+          lessons: c.totalLessons,
+          businessType: c.businessType,
           level: "Beginner"
-        },
-        {
-          id: "2",
-          title: "Inventory Management",
-          progress: 40,
-          lastAccessed: "2024-01-14",
-          duration: 6,
-          modules: 4,
-          lessons: 16,
-          businessType: "Retail",
-          level: "Intermediate"
-        }
-      ])
+        })))
 
-      setRecommendedCourses([
-        {
-          id: "3",
-          title: "Customer Service Excellence",
-          progress: 0,
-          lastAccessed: "",
-          duration: 4,
-          modules: 3,
-          lessons: 12,
-          businessType: "General",
-          level: "Beginner"
-        }
-      ])
+        // Aggregated stats from progress
+        const completed = progressData.courses.filter((c: any) => c.progressPercentage === 100).length
+        const totalEnrolled = progressData.courses.length
+        
+        setStats(prev => ({
+          ...prev,
+          coursesEnrolled: totalEnrolled,
+          coursesCompleted: completed,
+          certificatesEarned: completed // Assuming 1 certificate per course for now
+        }))
+      }
 
-      setUpcomingWebinars([
-        {
-          id: "1",
-          title: "Advanced Reporting Techniques",
-          date: "Jan 20, 2024",
-          time: "2:00 PM",
-          duration: "1 hour",
-          registered: false
+      // Fetch Stats (Wait for implementation or use fallback)
+      try {
+        const statsRes = await fetch("/api/user/stats")
+        if (statsRes.ok) {
+          const statsData = await statsRes.json()
+          setStats(prev => ({ ...prev, ...statsData }))
         }
-      ])
+      } catch (e) {
+        console.warn("Stats API not yet available")
+      }
 
-      setRecentCertificates([
-        {
-          id: "1",
-          courseTitle: "Getting Started with AppEx",
-          earnedDate: "Jan 10, 2024",
-          certificateUrl: "#",
-          score: 92
-        }
-      ])
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
     } finally {

@@ -1,3 +1,5 @@
+"use client"
+
 import { MainLayout } from "@/components/layout/main-layout"
 import { VideoPlayer } from "@/components/player/video-player"
 import { Button } from "@/components/ui/button"
@@ -15,90 +17,98 @@ import {
   PlayCircle,
   FileText,
   Download,
-  Award
+  Award,
+  ChevronLeft
 } from "lucide-react"
 import Link from "next/link"
 import { PullToRefresh } from "@/components/ui/pull-to-refresh"
+import { useSession } from "next-auth/react"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState, use } from "react"
 
-export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params
+export default function CoursePage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
+  const { id } = resolvedParams
+  const { data: session, status } = useSession()
+  const router = useRouter()
   
-  // Mock course data
-  const course = {
-    id: resolvedParams.id,
-    title: "Getting Started with AppEx Retail",
-    description: "Learn the fundamentals of AppEx Retail Management System, from initial setup to daily operations. This comprehensive course covers everything you need to know to efficiently run your retail business using AppEx.",
-    level: "BEGINNER" as const,
-    duration: 180,
-    modules: 5,
-    rating: 4.8,
-    reviews: 324,
-    enrolledCount: 1247,
-    thumbnail: "/api/placeholder/800/450",
-    videoIntroUrl: "https://example.com/intro-video.mp4",
-    businessType: "RETAIL",
-    progress: 75,
-    instructor: {
-      name: "Sarah Chen",
-      avatar: "/api/placeholder/40/40",
-      bio: "Retail Management Expert with 10+ years of experience"
-    } as const,
-    learningObjectives: [
-      "Set up and configure AppEx Retail for your business",
-      "Master daily POS operations and transactions",
-      "Manage inventory and stock levels effectively",
-      "Handle customer management and loyalty programs",
-      "Generate and analyze business reports"
-    ] as const,
-    prerequisites: [
-      "Basic computer skills",
-      "Understanding of retail operations"
-    ] as const,
-    certificate: {
-      available: true,
-      requirements: "Complete all modules and pass final assessment with 80% or higher"
+  const [course, setCourse] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [activeLesson, setActiveLesson] = useState<any>(null)
+  const [overallProgress, setOverallProgress] = useState(0)
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin")
+      return
+    }
+
+    if (status === "authenticated") {
+      fetchCourseData()
+    }
+  }, [id, status, router])
+
+  const fetchCourseData = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/courses/${id}`)
+      if (!response.ok) throw new Error("Failed to fetch course")
+      const data = await response.json()
+      setCourse(data)
+      
+      // Fetch progress
+      const progressResponse = await fetch(`/api/learning/progress?courseId=${id}`)
+      if (progressResponse.ok) {
+        const progressData = await progressResponse.json()
+        setOverallProgress(progressData.overallProgress)
+        
+        // Find first incomplete lesson or first lesson
+        const firstIncomplete = progressData.lessons.find((p: any) => p.status !== "COMPLETED")
+        if (firstIncomplete) {
+          const lesson = data.modules.flatMap((m: any) => m.lessons).find((l: any) => l.id === firstIncomplete.lessonId)
+          setActiveLesson(lesson || data.modules[0].lessons[0])
+        } else {
+          setActiveLesson(data.modules[0].lessons[0])
+        }
+      } else {
+        setActiveLesson(data.modules[0].lessons[0])
+      }
+    } catch (error) {
+      console.error("Error loading course:", error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const modules = [
-    {
-      id: "1",
-      title: "Module 1: Getting Started",
-      description: "Introduction to AppEx Retail and initial setup",
-      duration: 45,
-      lessons: [
-        { id: "1-1", title: "Course Introduction", type: "video", duration: 10, completed: true },
-        { id: "1-2", title: "System Requirements", type: "video", duration: 15, completed: true },
-        { id: "1-3", title: "Account Setup", type: "video", duration: 20, completed: true }
-      ]
-    },
-    {
-      id: "2", 
-      title: "Module 2: POS Operations",
-      description: "Master point of sale operations and transactions",
-      duration: 60,
-      lessons: [
-        { id: "2-1", title: "Sales Transactions", type: "video", duration: 25, completed: true },
-        { id: "2-2", title: "Payment Methods", type: "video", duration: 20, completed: true },
-        { id: "2-3", title: "Returns and Refunds", type: "video", duration: 15, completed: false }
-      ]
-    },
-    {
-      id: "3",
-      title: "Module 3: Inventory Management", 
-      description: "Learn to manage stock levels and inventory",
-      duration: 75,
-      lessons: [
-        { id: "3-1", title: "Adding Products", type: "video", duration: 30, completed: false },
-        { id: "3-2", title: "Stock Management", type: "video", duration: 25, completed: false },
-        { id: "3-3", title: "Low Stock Alerts", type: "video", duration: 20, completed: false }
-      ]
+  const handleProgressUpdate = async (lessonId: string, percentage: number, lastPosition: number, isCompleted: boolean = false) => {
+    try {
+      await fetch('/api/learning/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonId,
+          progressPercentage: Math.round(percentage),
+          lastPositionSeconds: Math.round(lastPosition),
+          status: isCompleted ? "COMPLETED" : "IN_PROGRESS"
+        })
+      })
+      
+      if (isCompleted) {
+        // Refresh progress data to update UI
+        const progressResponse = await fetch(`/api/learning/progress?courseId=${id}`)
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json()
+          setOverallProgress(progressData.overallProgress)
+        }
+      }
+    } catch (error) {
+      console.error("Error updating progress:", error)
     }
-  ]
+  }
 
-  const getLevelColor = (level: "BEGINNER" | "intermediate" | "advanced") => {
-    switch (level) {
-      case "BEGINNER":
+  const getLevelColor = (level: string) => {
+    switch (level?.toLowerCase()) {
+      case "beginner":
         return "bg-green-100 text-green-700 border-green-200"
       case "intermediate":
         return "bg-yellow-100 text-yellow-700 border-yellow-200"
@@ -110,7 +120,18 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
   }
 
   const handleRefresh = async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await fetchCourseData()
+  }
+
+  if (loading || !course) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center h-screen space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+          <p className="text-muted-foreground font-medium">Loading course content...</p>
+        </div>
+      </MainLayout>
+    )
   }
 
   return (
@@ -122,10 +143,11 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
             {/* Mobile Video Player Header */}
             <div className="md:hidden sticky top-0 z-20 bg-black">
               <VideoPlayer
-                videoUrl={course.videoIntroUrl}
-                thumbnail={course.thumbnail}
-                onProgress={(progress) => console.log("Progress:", progress)}
-                onComplete={() => console.log("Video completed")}
+                key={activeLesson?.id}
+                videoUrl={activeLesson?.videoUrl || course.videoIntroUrl}
+                thumbnail={course.thumbnailUrl}
+                onProgress={(p) => handleProgressUpdate(activeLesson?.id, p, 0)}
+                onComplete={() => handleProgressUpdate(activeLesson?.id, 100, 0, true)}
                 className="w-full rounded-none"
               />
             </div>
@@ -137,12 +159,24 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                 {/* Desktop Video Player */}
                 <div className="hidden md:block lg:col-span-2">
                   <VideoPlayer
-                    videoUrl={course.videoIntroUrl}
-                    thumbnail={course.thumbnail}
-                    onProgress={(progress) => console.log("Progress:", progress)}
-                    onComplete={() => console.log("Video completed")}
+                    key={activeLesson?.id}
+                    videoUrl={activeLesson?.videoUrl || course.videoIntroUrl}
+                    thumbnail={course.thumbnailUrl}
+                    onProgress={(p) => handleProgressUpdate(activeLesson?.id, p, 0)}
+                    onComplete={() => handleProgressUpdate(activeLesson?.id, 100, 0, true)}
                     className="rounded-lg overflow-hidden shadow-md"
                   />
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-gray-900">{activeLesson?.title || "Course Introduction"}</h3>
+                      <p className="text-sm text-gray-500">Currently playing</p>
+                    </div>
+                    {activeLesson && (
+                      <Badge variant="outline" className="bg-white">
+                        {activeLesson.durationMinutes} minutes
+                      </Badge>
+                    )}
+                  </div>
                 </div>
 
                 {/* Course Info */}
@@ -150,7 +184,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <Badge className={getLevelColor(course.level)} variant="outline">
-                        {course.level}
+                        {course.level.toUpperCase()}
                       </Badge>
                       <Badge variant="secondary" className="text-xs">{course.businessType}</Badge>
                     </div>
@@ -163,78 +197,47 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                       {course.description}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs md:text-sm text-gray-500 mb-4">
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-4 w-4" />
-                        <span>{Math.floor(course.duration / 60)}h {course.duration % 60}m</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <BookOpen className="h-4 w-4" />
-                        <span>{course.modules} modules</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Users className="h-4 w-4" />
-                        <span>{course.enrolledCount.toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2 mb-6 bg-yellow-50/50 p-2 rounded-lg w-fit">
-                      <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-current" />
-                      <span className="font-semibold text-sm md:text-base">{course.rating}</span>
-                      <span className="text-xs md:text-sm text-gray-500">({course.reviews} reviews)</span>
-                    </div>
-
                     {/* Progress */}
-                    <div className="mb-6 bg-emerald-50/50 p-3 rounded-lg">
+                    <div className="mb-6 bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
                       <div className="flex justify-between text-xs md:text-sm mb-2">
                         <span className="font-medium text-emerald-800">Your Progress</span>
-                        <span className="text-emerald-600 font-bold">{course.progress}%</span>
+                        <span className="text-emerald-600 font-bold">{overallProgress}%</span>
                       </div>
-                      <Progress value={course.progress} className="h-2 bg-emerald-100" />
+                      <Progress value={overallProgress} className="h-2 bg-emerald-100" />
                     </div>
 
-                    {/* Action Buttons (Desktop only, Mobile is sticky bottom) */}
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <div className="p-3 bg-white border border-gray-100 rounded-lg text-center">
+                        <div className="text-lg font-bold">{course.modules.length}</div>
+                        <div className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Modules</div>
+                      </div>
+                      <div className="p-3 bg-white border border-gray-100 rounded-lg text-center">
+                        <div className="text-lg font-bold">{Math.floor(course.durationMinutes / 60)}h {course.durationMinutes % 60}m</div>
+                        <div className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Duration</div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
                     <div className="hidden md:block space-y-3">
-                      <Button className="w-full" size="lg">
-                        <PlayCircle className="mr-2 h-5 w-5" />
-                        Continue Learning
-                      </Button>
-                      <Button variant="outline" className="w-full">
-                        <BookOpen className="mr-2 h-5 w-5" />
-                        View Resources
-                      </Button>
-                      <Button 
-                        onClick={() => window.location.href = `/assessments?course=${resolvedParams.id}`}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                      >
-                        <Award className="mr-2 h-5 w-5" />
-                        Take Assessment
+                      {overallProgress < 100 ? (
+                        <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg">
+                          <PlayCircle className="mr-2 h-5 w-5" />
+                          Continue Learning
+                        </Button>
+                      ) : (
+                        <Button className="w-full bg-emerald-600 hover:bg-emerald-700" size="lg" onClick={() => router.push(`/assessments?course=${id}`)}>
+                          <Award className="mr-2 h-5 w-5" />
+                          Claim Certificate
+                        </Button>
+                      )}
+                      <Button variant="outline" className="w-full" asChild>
+                        <Link href="/solutions-training">
+                          <ChevronLeft className="mr-2 h-5 w-5" />
+                          Back to Training Hub
+                        </Link>
                       </Button>
                     </div>
                   </div>
-
-                  {/* Instructor Info */}
-                  <Card className="shadow-none border-gray-100 bg-gray-50/50">
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-base md:text-lg">Instructor</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-2">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <img 
-                          src={course.instructor.avatar}
-                          alt={course.instructor.name}
-                          className="w-10 h-10 md:w-12 md:h-12 rounded-full ring-2 ring-white shadow-sm"
-                        />
-                        <div>
-                          <h4 className="font-semibold text-sm md:text-base">{course.instructor.name}</h4>
-                          <p className="text-xs text-gray-500">Expert Instructor</p>
-                        </div>
-                      </div>
-                      <p className="text-xs md:text-sm text-gray-600">
-                        {course.instructor.bio}
-                      </p>
-                    </CardContent>
-                  </Card>
                 </div>
               </div>
             </div>
@@ -242,33 +245,34 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
             {/* Course Content Tabs */}
             <div className="px-4 md:px-0">
               <Tabs defaultValue="modules" className="w-full">
-                <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 hide-scrollbar">
-                  <TabsList className="w-max md:w-full grid-cols-4 min-w-[500px] h-11 md:h-12">
-                    <TabsTrigger value="modules" className="text-xs md:text-sm">Modules</TabsTrigger>
-                    <TabsTrigger value="objectives" className="text-xs md:text-sm">Objectives</TabsTrigger>
-                    <TabsTrigger value="resources" className="text-xs md:text-sm">Resources</TabsTrigger>
-                    <TabsTrigger value="certificate" className="text-xs md:text-sm">Certificate</TabsTrigger>
-                  </TabsList>
-                </div>
+                <TabsList className="w-full grid grid-cols-3 h-12">
+                  <TabsTrigger value="modules" className="text-sm">Curriculum</TabsTrigger>
+                  <TabsTrigger value="resources" className="text-sm">Resources</TabsTrigger>
+                  <TabsTrigger value="certificate" className="text-sm">Certificate</TabsTrigger>
+                </TabsList>
 
                 <div className="mt-4 pb-6">
                   <TabsContent value="modules" className="space-y-4 m-0">
-                    {modules.map((module) => (
-                      <Card key={module.id} className="shadow-sm border-gray-100">
-                        <CardHeader className="p-4 md:p-6">
+                    {course.modules.map((module: any) => (
+                      <Card key={module.id} className="shadow-sm border-gray-100 overflow-hidden">
+                        <CardHeader className="p-4 md:p-6 bg-gray-50/50">
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                             <CardTitle className="text-base md:text-lg">{module.title}</CardTitle>
-                            <div className="flex items-center space-x-2 text-xs md:text-sm text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded w-fit">
+                            <div className="flex items-center space-x-2 text-xs md:text-sm text-gray-500 font-medium">
                               <Clock className="h-3 w-3 md:h-4 md:w-4" />
-                              <span>{Math.floor(module.duration / 60)}h {module.duration % 60}m</span>
+                              <span>{module.durationMinutes}m</span>
                             </div>
                           </div>
-                          <p className="text-xs md:text-sm text-gray-600 mt-2">{module.description}</p>
+                          <p className="text-xs md:text-sm text-gray-600 mt-1">{module.description}</p>
                         </CardHeader>
-                        <CardContent className="p-3 md:p-6 md:pt-0">
-                          <div className="space-y-2 md:space-y-3">
-                            {module.lessons.map((lesson) => (
-                              <div key={lesson.id} className="flex items-center space-x-3 p-2 md:p-3 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100 cursor-pointer">
+                        <CardContent className="p-0">
+                          <div className="divide-y divide-gray-100">
+                            {module.lessons.map((lesson: any) => (
+                              <div 
+                                key={lesson.id} 
+                                onClick={() => setActiveLesson(lesson)}
+                                className={`flex items-center space-x-3 p-4 hover:bg-gray-50 transition-colors cursor-pointer ${activeLesson?.id === lesson.id ? 'bg-emerald-50/50 border-l-4 border-emerald-500' : ''}`}
+                              >
                                 <div className="flex-shrink-0">
                                   {lesson.completed ? (
                                     <CheckCircle className="h-5 w-5 text-emerald-600" />
@@ -277,14 +281,14 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                                   )}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h4 className="font-medium text-sm md:text-base text-gray-900 truncate">{lesson.title}</h4>
+                                  <h4 className={`font-medium text-sm md:text-base ${activeLesson?.id === lesson.id ? 'text-emerald-700' : 'text-gray-900'} truncate`}>{lesson.title}</h4>
                                   <div className="flex items-center space-x-3 text-xs text-gray-500 mt-0.5">
-                                    <span className="capitalize">{lesson.type}</span>
+                                    <span className="capitalize">{lesson.contentType.toLowerCase()}</span>
                                     <span>•</span>
-                                    <span>{Math.floor(lesson.duration / 60)}m {lesson.duration % 60}s</span>
+                                    <span>{lesson.durationMinutes}m</span>
                                   </div>
                                 </div>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-emerald-600">
+                                <Button variant="ghost" size="icon" className={`h-8 w-8 ${activeLesson?.id === lesson.id ? 'text-emerald-600' : 'text-gray-400'}`}>
                                   <PlayCircle className="h-5 w-5" />
                                 </Button>
                               </div>
@@ -295,126 +299,42 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                     ))}
                   </TabsContent>
 
-                  <TabsContent value="objectives" className="space-y-4 m-0">
-                    <Card className="shadow-sm border-gray-100">
-                      <CardHeader className="p-4 md:p-6">
-                        <CardTitle className="text-base md:text-lg">What You'll Learn</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4 md:p-6 pt-0">
-                        <ul className="space-y-3 md:space-y-4">
-                          {course.learningObjectives.map((objective, index) => (
-                            <li key={index} className="flex items-start space-x-3">
-                              <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                              <span className="text-sm md:text-base text-gray-700">{objective}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="shadow-sm border-gray-100">
-                      <CardHeader className="p-4 md:p-6">
-                        <CardTitle className="text-base md:text-lg">Prerequisites</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4 md:p-6 pt-0">
-                        <ul className="space-y-2 md:space-y-3">
-                          {course.prerequisites.map((prereq, index) => (
-                            <li key={index} className="flex items-center space-x-3">
-                              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
-                              <span className="text-sm md:text-base text-gray-700">{prereq}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
                   <TabsContent value="resources" className="space-y-4 m-0">
-                    <Card className="shadow-sm border-gray-100">
-                      <CardHeader className="p-4 md:p-6">
-                        <CardTitle className="text-base md:text-lg">Course Resources</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4 md:p-6 pt-0">
-                        <div className="space-y-3 md:space-y-4">
-                          <div className="flex items-center justify-between p-3 md:p-4 border border-gray-100 rounded-lg hover:border-emerald-100 hover:bg-emerald-50/30 transition-colors group">
-                            <div className="flex items-center space-x-3 md:space-x-4">
-                              <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
-                                <FileText className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-sm md:text-base">Course Guide</h4>
-                                <p className="text-xs md:text-sm text-gray-500 line-clamp-1">Complete course documentation</p>
-                              </div>
-                            </div>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 md:w-auto md:px-3 text-emerald-600 hover:bg-emerald-100">
-                              <Download className="h-4 w-4 md:mr-2" />
-                              <span className="hidden md:inline">Download</span>
-                            </Button>
+                    <Card className="shadow-sm border-gray-100 p-6">
+                      <div className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:border-emerald-100 hover:bg-emerald-50/30 transition-colors">
+                        <div className="flex items-center space-x-4">
+                          <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                            <FileText className="h-6 w-6" />
                           </div>
-
-                          <div className="flex items-center justify-between p-3 md:p-4 border border-gray-100 rounded-lg hover:border-emerald-100 hover:bg-emerald-50/30 transition-colors group">
-                            <div className="flex items-center space-x-3 md:space-x-4">
-                              <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-                                <FileText className="h-5 w-5" />
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-sm md:text-base">Quick Reference</h4>
-                                <p className="text-xs md:text-sm text-gray-500 line-clamp-1">Cheat sheet and shortcuts</p>
-                              </div>
-                            </div>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 md:w-auto md:px-3 text-blue-600 hover:bg-blue-100">
-                              <Download className="h-4 w-4 md:mr-2" />
-                              <span className="hidden md:inline">Download</span>
-                            </Button>
+                          <div>
+                            <h4 className="font-medium">Training PowerPoint</h4>
+                            <p className="text-sm text-gray-500">Detailed curriculum slides</p>
                           </div>
                         </div>
-                      </CardContent>
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </Button>
+                      </div>
                     </Card>
                   </TabsContent>
 
                   <TabsContent value="certificate" className="space-y-4 m-0">
-                    <Card className="shadow-sm border-gray-100">
-                      <CardHeader className="p-4 md:p-6">
-                        <CardTitle className="text-base md:text-lg">Certificate of Completion</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4 md:p-6 pt-0">
-                        <div className="text-center space-y-6 max-w-md mx-auto">
-                          <div className="w-24 h-24 md:w-32 md:h-32 mx-auto bg-emerald-50 rounded-full flex items-center justify-center ring-4 ring-emerald-100">
-                            <Award className="h-12 w-12 md:h-16 md:w-16 text-emerald-600" />
-                          </div>
-                          
-                          <div>
-                            <h3 className="text-lg md:text-xl font-semibold mb-2">
-                              {course.certificate.available ? "Certificate Available" : "Certificate Locked"}
-                            </h3>
-                            <p className="text-sm md:text-base text-gray-600 mb-6">
-                              {course.certificate.requirements}
-                            </p>
-                            
-                            {course.certificate.available && course.progress === 100 ? (
-                              <Button size="lg" className="w-full sm:w-auto min-h-[48px]">
-                                <Award className="mr-2 h-5 w-5" />
-                                Download Certificate
-                              </Button>
-                            ) : (
-                              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                <p className="text-sm font-medium text-gray-700 mb-3">
-                                  Complete the course to unlock
-                                </p>
-                                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                                  <div 
-                                    className="bg-emerald-500 h-2 rounded-full transition-all duration-500" 
-                                    style={{ width: `${course.progress}%` }}
-                                  />
-                                </div>
-                                <p className="text-xs text-gray-500 font-medium">
-                                  {course.progress}% Complete
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
+                    <Card className="shadow-sm border-gray-100 p-8 text-center">
+                      <div className="w-24 h-24 mx-auto bg-emerald-50 rounded-full flex items-center justify-center mb-4 ring-4 ring-emerald-100">
+                        <Award className="h-12 w-12 text-emerald-600" />
+                      </div>
+                      <h3 className="text-xl font-bold mb-2">Industry Certification</h3>
+                      <p className="text-gray-600 mb-6 max-w-sm mx-auto">
+                        Complete all modules to 100% and pass the final assessment to earn your official AppEx Specialist certificate.
+                      </p>
+                      <Button 
+                        size="lg" 
+                        disabled={overallProgress < 100}
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                      >
+                        {overallProgress < 100 ? `Locked (${overallProgress}%)` : 'Claim Certificate'}
+                      </Button>
                     </Card>
                   </TabsContent>
                 </div>
@@ -426,11 +346,11 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
       {/* Mobile Sticky Bottom Action Bar */}
       <div className="md:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-3 z-30 flex gap-2 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] safe-area-pb">
-        <Button className="flex-1 h-12 shadow-sm">
+        <Button className="flex-1 h-12 bg-emerald-600" onClick={() => setActiveLesson(course.modules[0].lessons[0])}>
           <PlayCircle className="mr-2 h-5 w-5" />
-          Continue
+          {overallProgress > 0 ? 'Continue' : 'Start'}
         </Button>
-        <Button variant="outline" size="icon" className="h-12 w-12 border-emerald-200 text-emerald-600 bg-emerald-50" onClick={() => window.location.href = `/assessments?course=${resolvedParams.id}`}>
+        <Button variant="outline" size="icon" className="h-12 w-12 border-emerald-200 text-emerald-600 bg-emerald-50">
           <Award className="h-5 w-5" />
         </Button>
       </div>

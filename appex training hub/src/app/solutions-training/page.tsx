@@ -38,8 +38,18 @@ import {
   Headphones,
   FileText,
   Video,
-  ChevronRight
+  ChevronRight,
+  ArrowLeft,
+  Lock,
+  GraduationCap
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { MainLayout } from "@/components/layout/main-layout"
 
 
@@ -60,18 +70,43 @@ export default function SolutionsTrainingPage() {
   const router = useRouter()
   const [selectedSolution, setSelectedSolution] = useState<string>("retail-management")
   const [isLoading, setIsLoading] = useState(true)
+  const [courseProgress, setCourseProgress] = useState<any[]>([])
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin")
       return
     }
-    if (status !== "loading") {
-      setIsLoading(false)
+    if (status === "authenticated") {
+      fetchProgress()
     }
   }, [status, router])
 
-  const solutions = solutionsData
+  const fetchProgress = async () => {
+    try {
+      const response = await fetch("/api/learning/progress?summary=true")
+      if (response.ok) {
+        const data = await response.json()
+        setCourseProgress(data.courses)
+      }
+    } catch (error) {
+      console.error("Error fetching progress:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const solutions = solutionsData.map(solution => {
+    // Map real progress from API
+    const businessType = solution.id.split('-')[0].toUpperCase()
+    const progress = courseProgress.find(cp => cp.businessType === businessType)
+    
+    return {
+      ...solution,
+      progress: progress ? progress.progressPercentage : 0,
+      courseId: progress ? progress.courseId : null
+    }
+  })
 
   const currentSolution = solutions.find(s => s.id === selectedSolution)
 
@@ -124,6 +159,14 @@ export default function SolutionsTrainingPage() {
                     <Star className="h-3 w-3 text-yellow-500 mr-1" />
                     <span>{solution.stats.averageRating}</span>
                   </div>
+                  {solution.progress > 0 && (
+                    <div className="mt-3 space-y-1">
+                      <div className="flex justify-between text-[10px] font-bold">
+                        <span className="text-emerald-600">{solution.progress}%</span>
+                      </div>
+                      <Progress value={solution.progress} className="h-1 bg-gray-100" />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )
@@ -182,12 +225,20 @@ export default function SolutionsTrainingPage() {
                   <TabsTrigger value="modules">Modules</TabsTrigger>
                   <TabsTrigger value="features">Features</TabsTrigger>
                 </TabsList>
-                <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
-                  <Link href={`/solutions-training/${currentSolution.id}`}>
-                    View Full Program
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <Button variant="outline" asChild>
+                    <a href={`/syllabi/${currentSolution.id}.zip`} download={`${currentSolution.name}_Syllabus.zip`}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Syllabus
+                    </a>
+                  </Button>
+                  <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+                    <Link href={`/solutions-training/${currentSolution.id}`}>
+                      View Full Program
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
 
               {/* Training Modules */}
@@ -245,33 +296,46 @@ export default function SolutionsTrainingPage() {
                               
                               <p className="text-gray-600 mb-3">{module.description}</p>
                               
-                              <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
-                                <div className="flex items-center space-x-1">
-                                  <Clock className="h-4 w-4" />
+                              <div className="flex items-center space-x-6 text-sm text-gray-500 mb-3">
+                                <div className="flex items-center">
+                                  <Clock className="h-4 w-4 mr-1.5" />
                                   <span>{module.duration}</span>
                                 </div>
-                                <div className="flex items-center space-x-1">
-                                  <BookOpen className="h-4 w-4" />
-                                  <span>{module.topics.length} topics</span>
-                                </div>
-                              </div>
-                              
-                              {module.progress > 0 && (
-                                <div className="mb-3">
-                                  <div className="flex justify-between text-sm mb-1">
-                                    <span>Progress</span>
-                                    <span>{module.progress}%</span>
-                                  </div>
-                                  <Progress value={module.progress} className="h-2" />
-                                </div>
-                              )}
-                              
-                              <div className="flex flex-wrap gap-1">
-                                {module.topics.map((topic, topicIndex) => (
-                                  <Badge key={topicIndex} variant="outline" className="text-xs">
-                                    {topic}
-                                  </Badge>
-                                ))}
+                                <Dialog>
+                                  <DialogTrigger 
+                                    render={
+                                      <Button variant="ghost" size="sm" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 h-8 px-2" />
+                                    }
+                                  >
+                                    <BookOpen className="h-4 w-4 mr-1.5" />
+                                    View Topics
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                    <DialogHeader>
+                                      <DialogTitle className="flex items-center space-x-2">
+                                        <GraduationCap className="h-6 w-6 text-emerald-600" />
+                                        <span>{module.title}</span>
+                                      </DialogTitle>
+                                      <p className="text-sm text-muted-foreground mt-1">{module.description}</p>
+                                    </DialogHeader>
+                                    <div className="mt-6 space-y-4">
+                                      <h4 className="font-bold text-gray-900 flex items-center">
+                                        <CheckCircle className="h-4 w-4 text-emerald-600 mr-2" />
+                                        Presentation Slides & Topics
+                                      </h4>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {module.topics.map((topic, i) => (
+                                          <div key={i} className="flex items-start space-x-2 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                                            <div className="w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-400 flex-shrink-0 mt-0.5">
+                                              {i + 1}
+                                            </div>
+                                            <span className="text-sm text-gray-700">{topic}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
                               </div>
                             </div>
                           </div>

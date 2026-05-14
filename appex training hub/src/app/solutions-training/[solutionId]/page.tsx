@@ -24,8 +24,16 @@ import {
   FileText,
   ChevronRight,
   ArrowLeft,
-  Lock
+  Lock,
+  GraduationCap
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import Link from "next/link"
 
 export default function SolutionLandingPage() {
@@ -112,9 +120,11 @@ export default function SolutionLandingPage() {
                 <Play className="h-4 w-4 mr-2" />
                 Start Training
               </Button>
-              <Button size="lg" variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Download Syllabus
+              <Button size="lg" variant="outline" asChild>
+                <a href={`/syllabi/${solution.id}.zip`} download={`${solution.name}_Syllabus.zip`}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Syllabus
+                </a>
               </Button>
             </div>
           </div>
@@ -198,10 +208,43 @@ export default function SolutionLandingPage() {
                             <Video className="h-4 w-4 mr-1.5" />
                             {module.duration}
                           </div>
-                          <div className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1.5" />
-                            {module.difficulty}
-                          </div>
+                          
+                          <Dialog>
+                            <DialogTrigger 
+                              render={
+                                <Button variant="ghost" size="sm" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 h-8 px-2" />
+                              }
+                            >
+                              <BookOpen className="h-4 w-4 mr-1.5" />
+                              View Topics
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle className="flex items-center space-x-2">
+                                  <GraduationCap className="h-6 w-6 text-emerald-600" />
+                                  <span>{module.title}</span>
+                                </DialogTitle>
+                                <p className="text-sm text-muted-foreground mt-1">{module.description}</p>
+                              </DialogHeader>
+                              <div className="mt-6 space-y-4">
+                                <h4 className="font-bold text-gray-900 flex items-center">
+                                  <CheckCircle className="h-4 w-4 text-emerald-600 mr-2" />
+                                  Presentation Slides & Topics
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {module.topics.map((topic, i) => (
+                                    <div key={i} className="flex items-start space-x-2 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                                      <div className="w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-400 flex-shrink-0 mt-0.5">
+                                        {i + 1}
+                                      </div>
+                                      <span className="text-sm text-gray-700">{topic}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+
                           {module.isLocked ? (
                             <Lock className="h-4 w-4 text-gray-300" />
                           ) : (
