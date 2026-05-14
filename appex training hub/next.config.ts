@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   env: {
     PRISMA_CLIENT_ENGINE_TYPE: 'library',
   },
+  turbopack: {},
 };
 
 export default withPWA(nextConfig);
