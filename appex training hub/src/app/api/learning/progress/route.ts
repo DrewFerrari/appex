@@ -16,14 +16,15 @@ export async function GET(request: NextRequest) {
         where: { email: session.user.email },
         select: { id: true }
       })
-      userId = user?.id
+      userId = user?.id ?? null
     }
     
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+      // Handle missing user ID
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      })
     }
 
     const { searchParams } = new URL(request.url)
@@ -213,14 +214,15 @@ export async function POST(request: NextRequest) {
         where: { email: session.user.email },
         select: { id: true }
       })
-      userId = user?.id
+      userId = user?.id ?? null
     }
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+      // Handle missing user ID
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      })
     }
 
     const body = await request.json()
