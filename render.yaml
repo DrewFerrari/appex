@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: appex-training-hub
+    runtime: node
+    rootDir: appex training hub
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        sync: false
+      - key: NEXTAUTH_URL
+        sync: false
+      - key: PRISMA_CLIENT_ENGINE_TYPE
+        value: library
+    plan: free
+    region: oregon
+ 
+databases:
+  - name: appex-training-db
+    databaseName: appex_training
+    user: appex_user
+    plan: free
+    region: oregon
