@@ -12,7 +12,7 @@ export async function GET(
   try {
     const { id: courseId } = await params
     const session = await getServerSession(authOptions)
-    let userId = session?.user?.id || request.headers.get("x-user-id")
+    let userId = session?.user?.id || (session?.user as any)?.id || request.headers.get("x-user-id")
     
     if (!userId && session?.user?.email) {
       const user = await prisma.user.findUnique({
@@ -114,7 +114,7 @@ export async function PUT(
   try {
     const { id: courseId } = await params
     const session = await getServerSession(authOptions)
-    let userId = session?.user?.id || request.headers.get("x-user-id")
+    let userId = session?.user?.id || (session?.user as any)?.id || request.headers.get("x-user-id")
     
     if (!userId && session?.user?.email) {
       const user = await prisma.user.findUnique({
